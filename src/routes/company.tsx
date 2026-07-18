@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import { PageLayout, PageHero } from "@/components/site/PageLayout";
+import { Reveal, Stagger, StaggerItem } from "@/components/site/motion/Reveal";
+import { CountUp } from "@/components/site/motion/CountUp";
 import tradingFloor from "@/assets/trading-floor.jpg";
 
 export const Route = createFileRoute("/company")({
@@ -15,14 +18,33 @@ export const Route = createFileRoute("/company")({
   component: CompanyPage,
 });
 
+const stats = [
+  { end: 150, suffix: "K+", label: "Active investors" },
+  { end: 40, suffix: "+", label: "Countries served" },
+  { prefix: "$", end: 1.2, suffix: "B", decimals: 1, label: "Assets managed" },
+];
+
 function CompanyPage() {
   return (
     <PageLayout>
       <PageHero title="Our Company" subtitle="The revolution in management — inspired by innovation, driven by results." />
-      <section className="py-20 px-4">
+      <section className="py-20 md:py-28 px-4">
         <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-12 items-center">
-          <img src={tradingFloor} alt="Trading floor" className="rounded-lg shadow-xl" loading="lazy" />
-          <div>
+          <Reveal>
+            <div className="overflow-hidden rounded-lg shadow-xl">
+              <motion.img
+                src={tradingFloor}
+                alt="Trading floor"
+                loading="lazy"
+                className="w-full h-full object-cover"
+                initial={{ scale: 1.1 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </div>
+          </Reveal>
+          <Reveal delay={0.15}>
             <h2 className="font-display text-3xl text-navy font-bold">Our Mission</h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
               To enhance lives by providing a safe avenue, inspired by effective and innovative
@@ -36,25 +58,25 @@ function CompanyPage() {
               the United Kingdom. Our team combines quantitative research, engineering, and
               investment expertise to deliver a truly global platform.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      <section className="bg-secondary py-20 px-4">
+      <section className="bg-secondary py-20 md:py-28 px-4">
         <div className="mx-auto max-w-5xl text-center">
-          <h2 className="font-display text-4xl text-navy font-bold">By the Numbers</h2>
-          <div className="mt-10 grid sm:grid-cols-3 gap-8">
-            {[
-              { n: "150K+", l: "Active investors" },
-              { n: "40+", l: "Countries served" },
-              { n: "$1.2B", l: "Assets managed" },
-            ].map((s) => (
-              <div key={s.l}>
-                <p className="font-display text-5xl font-bold text-navy">{s.n}</p>
-                <p className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">{s.l}</p>
-              </div>
+          <Reveal>
+            <h2 className="font-display text-3xl sm:text-4xl text-navy font-bold">By the Numbers</h2>
+          </Reveal>
+          <Stagger className="mt-10 grid sm:grid-cols-3 gap-8">
+            {stats.map((s) => (
+              <StaggerItem key={s.label}>
+                <p className="font-display text-5xl font-bold text-navy">
+                  <CountUp end={s.end} prefix={s.prefix} suffix={s.suffix} decimals={s.decimals ?? 0} />
+                </p>
+                <p className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">{s.label}</p>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
     </PageLayout>

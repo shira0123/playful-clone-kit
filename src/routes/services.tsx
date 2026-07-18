@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageLayout, PageHero } from "@/components/site/PageLayout";
+import { Stagger, StaggerItem } from "@/components/site/motion/Reveal";
 import { Bot, LineChart, Coins, Users, Wallet, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/services")({
@@ -28,16 +29,20 @@ function ServicesPage() {
   return (
     <PageLayout>
       <PageHero title="Our Services" subtitle="A complete suite of A.I.-driven trading and investment solutions." />
-      <section className="py-20 px-4">
-        <div className="mx-auto max-w-6xl grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="py-20 md:py-28 px-4">
+        <Stagger className="mx-auto max-w-6xl grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((s) => (
-            <div key={s.title} className="p-8 rounded-lg border hover:border-gold transition-colors">
-              <s.icon className="text-gold mb-4" size={32} />
-              <h3 className="font-display text-xl text-navy font-semibold">{s.title}</h3>
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
-            </div>
+            <StaggerItem key={s.title}>
+              <div className="p-8 rounded-lg border card-lift bg-white h-full">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-gold/10 text-gold mb-4">
+                  <s.icon size={24} />
+                </div>
+                <h3 className="font-display text-xl text-navy font-semibold">{s.title}</h3>
+                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+              </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </section>
     </PageLayout>
   );
