@@ -1,41 +1,62 @@
-
 ## Goal
-Recreate the Evolve Digital Trade website (evolvedigitaltrade.netlify.app) — a crypto/AI trading company marketing site — as a multi-page TanStack Start app matching the original's branding, structure, copy, and design feel.
+Bring the current build closer to evolvedigitaltrade.netlify.app in motion, polish, and responsiveness — while keeping the same navy/gold identity and all existing content/pages.
 
-## Pages / Routes
-Mirroring the original nav (Home, Services, Investment, Our Company, Insights, Contact Us, Create Account, Account Login):
+## What changes
 
-- `/` — Home: hero carousel, Dodge Coin Project section, live crypto ticker, "Trusted by millions" awards, copy-trading app section, features grid, investment CTA, advantage section, footer.
-- `/services` — Services offered (AI trading, portfolio management, copy trading, etc.).
-- `/investment` — Investment plans/tiers ($200 min, other tiers), FAQs.
-- `/company` — About Us: mission, vision, team, regulation.
-- `/insights` — Blog/news style page with market insights cards.
-- `/contact` — Contact form + company details.
-- External links preserved for "Create Account" (`app.e-directpro.com/register`) and "Account Login".
+### 1. Motion system (framer-motion)
+- Add `framer-motion` dependency.
+- Create small reusable wrappers: `<Reveal>` (fade+rise on scroll into view), `<Stagger>` (children cascade), `<Parallax>` (subtle Y translate on scroll for hero images).
+- Apply across Home, Services, Investment, Company, Insights, Contact:
+  - Hero: headline word-by-word fade-up, subheadline fade, CTA scale-in, background image slow zoom (Ken Burns) + parallax.
+  - Section headings + paragraphs: fade-up on view.
+  - Feature/award/plan cards: staggered fade-up, hover lift (translateY + shadow + gold border glow).
+  - Numbers ($200, stats): count-up on view.
+  - Images: subtle zoom-in on scroll.
 
-## Design
-- Palette: deep navy/dark blue (`#0a1a2f`-ish) with gold accents (matching the gold Bitcoin hero) and white body.
-- Typography: serif display (Playfair-style) for headings + clean sans (Inter/DM Sans) for body — mirrors original's "Evolve digital trade" serif wordmark.
-- Layout: full-width hero with background image + centered headline + rounded CTA button, alternating light/dark content sections, feature icon grid, awards row.
-- Motion: subtle fade-in on scroll, hero image parallax/zoom, ticker marquee.
-- Reusable shared Header (sticky) + Footer across all routes.
+### 2. Header
+- Shrink on scroll (reduced padding + stronger blur + subtle shadow).
+- Nav links: animated gold underline sweep on hover (already have `story-link` pattern — apply consistently).
+- CTA button: gold glow pulse on hover.
+- Mobile menu: slide-down with staggered link fade, backdrop overlay, body scroll lock, close on route change.
 
-## Assets
-- Regenerate logo (blue "Evolve" wordmark with small chart icon).
-- Generate hero images (gold Bitcoin closeup, Dodge Coin glow, phone mockup for copy-trading, awards/media placeholder SVGs).
-- Use lucide-react icons for feature tiles.
-- Live crypto prices via CoinGecko public API (no key) for the ticker strip.
+### 3. Hero
+- Layered background: image + navy gradient + subtle animated grain/gold radial glow.
+- Ken Burns zoom loop on the bitcoin image.
+- Gold eyebrow with animated divider lines on either side.
+- Scroll-down indicator (bouncing chevron).
 
-## Technical
-- TanStack Start file-based routes under `src/routes/` (`index.tsx`, `services.tsx`, `investment.tsx`, `company.tsx`, `insights.tsx`, `contact.tsx`).
-- Shared `Header`/`Footer` components in `src/components/site/`.
-- Per-route `head()` metadata (title, description, og tags).
-- Design tokens (navy/gold) added to `src/styles.css` via oklch.
-- Framer Motion for scroll/hero animations.
-- Contact form is presentational (no backend) unless you want Lovable Cloud wired for submissions.
+### 4. Crypto ticker
+- Pause on hover, gradient fade masks on both edges, smoother infinite loop, gold up / red down chips with small arrow icons.
 
-## Out of scope (confirm before build)
-- Actual user auth / trading dashboard — "Create Account" and "Account Login" will link out to the original `app.e-directpro.com` URLs as on the source site.
-- No payments/backend by default.
+### 5. Cards & buttons
+- Global card hover: translateY(-4px), shadow-elegant, border transitions to gold.
+- Buttons: gold gradient variant with shine sweep on hover; navy button with subtle inner highlight.
+- Add `--shadow-elegant` and `--gradient-gold` tokens to `src/styles.css`.
 
-Reply "go" to build, or tell me anything to adjust (extra pages, keep external auth links vs. build our own login, add Lovable Cloud for the contact form, etc.).
+### 6. Section transitions
+- Alternating section backgrounds already exist; add soft diagonal / wave divider SVGs between navy and light sections for the layered feel of the original.
+- Consistent vertical rhythm (`py-24 md:py-32` on marquee sections).
+
+### 7. Responsive pass
+- Header: verify tap targets, mobile logo sizing, safe-area padding.
+- Hero: clamp font sizes (`text-4xl sm:text-5xl md:text-7xl`), reduce min-height on mobile, ensure CTAs stack cleanly.
+- Grids: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` audit across pages; add `min-w-0` + `truncate` where text sits next to icons (per responsive rules).
+- Investment plans / pricing: horizontal scroll snap on mobile if cards overflow.
+- Footer: collapse to single column on mobile with proper spacing.
+- Images: `loading="lazy"`, explicit `aspect-ratio`, `object-cover` everywhere.
+
+### 8. Micro-polish
+- Smooth scroll (`html { scroll-behavior: smooth }`).
+- Focus-visible rings in gold for a11y.
+- Respect `prefers-reduced-motion` — disable transforms/parallax, keep opacity fades only.
+- Page transition: fade+slide on route change via framer-motion `AnimatePresence` in `__root.tsx` around `<Outlet />`.
+
+## Technical notes
+- All motion via `framer-motion` (already recommended in stack); no GSAP.
+- New files: `src/components/site/motion/Reveal.tsx`, `Stagger.tsx`, `Parallax.tsx`, `CountUp.tsx`, `SectionDivider.tsx`.
+- Update: `Header.tsx`, `CryptoTicker.tsx`, `PageLayout.tsx` (PageHero animations), `routes/index.tsx` + other route files, `styles.css` (tokens, shine keyframe, reduced-motion guard, scroll-behavior), `__root.tsx` (AnimatePresence wrapper).
+- No backend/business-logic changes.
+
+## Out of scope
+- No new pages or content rewrites.
+- No auth/database changes.

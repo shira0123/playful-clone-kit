@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageLayout, PageHero } from "@/components/site/PageLayout";
+import { Stagger, StaggerItem } from "@/components/site/motion/Reveal";
 
 export const Route = createFileRoute("/insights")({
   head: () => ({
@@ -27,17 +28,21 @@ function InsightsPage() {
   return (
     <PageLayout>
       <PageHero title="Insights" subtitle="Analysis, updates, and thinking from our research team." />
-      <section className="py-20 px-4">
-        <div className="mx-auto max-w-6xl grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="py-20 md:py-28 px-4">
+        <Stagger className="mx-auto max-w-6xl grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {posts.map((p) => (
-            <article key={p.title} className="p-6 rounded-lg border hover:border-gold transition-colors">
-              <p className="text-xs uppercase tracking-widest text-gold font-semibold">{p.date}</p>
-              <h3 className="mt-3 font-display text-xl text-navy font-semibold">{p.title}</h3>
-              <p className="mt-3 text-sm text-muted-foreground">{p.excerpt}</p>
-              <p className="mt-4 text-sm font-semibold text-navy">Read more →</p>
-            </article>
+            <StaggerItem key={p.title}>
+              <article className="group p-6 rounded-lg border card-lift bg-white h-full">
+                <p className="text-xs uppercase tracking-widest text-gold font-semibold">{p.date}</p>
+                <h3 className="mt-3 font-display text-xl text-navy font-semibold">{p.title}</h3>
+                <p className="mt-3 text-sm text-muted-foreground">{p.excerpt}</p>
+                <p className="mt-4 text-sm font-semibold text-navy inline-flex items-center gap-1 group-hover:text-gold transition-colors">
+                  Read more <span className="transition-transform group-hover:translate-x-1">→</span>
+                </p>
+              </article>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </section>
     </PageLayout>
   );
