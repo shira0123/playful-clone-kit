@@ -58,13 +58,13 @@ export function Header() {
               {n.label.toUpperCase()}
             </Link>
           ))}
-          <a href="https://app.e-directpro.com/register" className="text-white/90 hover:text-gold transition-colors">CREATE ACCOUNT</a>
-          <a
-            href="https://app.e-directpro.com/login"
+          <Link to="/register" className="text-white/90 hover:text-gold transition-colors">CREATE ACCOUNT</Link>
+          <Link
+            to="/login"
             className="relative overflow-hidden rounded-md bg-gold px-4 py-2 text-navy font-semibold shadow-[0_8px_24px_-8px_color-mix(in_oklab,var(--gold)_60%,transparent)] hover:shadow-[0_12px_32px_-8px_color-mix(in_oklab,var(--gold)_75%,transparent)] transition-shadow before:absolute before:inset-0 before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700 before:bg-gradient-to-r before:from-transparent before:via-white/40 before:to-transparent"
           >
             <span className="relative">ACCOUNT LOGIN</span>
-          </a>
+          </Link>
         </nav>
         <button
           className="lg:hidden text-white p-2 -mr-2"
@@ -100,14 +100,14 @@ export function Header() {
               ))}
               <motion.a
                 variants={{ hidden: { opacity: 0, x: -12 }, show: { opacity: 1, x: 0 } }}
-                href="https://app.e-directpro.com/register"
+                href="/register"
                 className="block py-2 hover:text-gold"
               >
                 Create Account
               </motion.a>
               <motion.a
                 variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}
-                href="https://app.e-directpro.com/login"
+                href="/login"
                 className="mt-3 rounded-md bg-gold px-4 py-3 text-navy font-semibold text-center"
               >
                 Account Login
