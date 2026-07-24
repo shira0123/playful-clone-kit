@@ -179,7 +179,12 @@ function Users() {
                             <KeyRound className="mr-2 h-4 w-4" /> Reset Password
                           </DropdownMenuItem>
                           
-                          <DropdownMenuItem onClick={() => void act(() => adminImpersonateUser({ data: { userId: user.id } }), "Impersonating user...")}>
+                          <DropdownMenuItem onClick={() => {
+                            void act(async () => {
+                              await adminImpersonateUser({ data: { userId: user.id } });
+                              window.location.href = "/dashboard";
+                            }, "Impersonating user...");
+                          }}>
                             <Eye className="mr-2 h-4 w-4" /> Impersonate
                           </DropdownMenuItem>
                           
