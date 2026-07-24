@@ -59,30 +59,29 @@ async function main() {
   const wallets = [
     {
       network: "Bitcoin (BTC)",
-      address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+      address: "bc1qdavpssg69079zz0n95wslmdq5n8c6ph8mfs47c",
       isActive: true,
     },
     {
       network: "Ethereum (ETH / ERC-20)",
-      address: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+      address: "0x45cbf1036050454da09562a0633737fc15283ff2",
       isActive: true,
     },
     {
       network: "Tether (USDT / TRC-20)",
-      address: "T9zX3QyYw4g4v9rN3mJ2kL3pX7qV8cW9hM",
+      address: "TF4b6HPMoACJiU9CacxMe2zthTxcjf2Bbw",
+      isActive: true,
+    },
+    {
+      network: "Tether (USDT / ERC-20)",
+      address: "0x45cbf1036050454da09562a0633737fc15283ff2",
       isActive: true,
     },
   ];
 
-  for (const wallet of wallets) {
-    const existing = await db.select().from(cryptoWallets).where(eq(cryptoWallets.network, wallet.network));
-    if (existing.length === 0) {
-      await db.insert(cryptoWallets).values(wallet);
-      console.log(`Inserted wallet: ${wallet.network}`);
-    } else {
-      console.log(`Wallet already exists: ${wallet.network}`);
-    }
-  }
+  await db.delete(cryptoWallets);
+  await db.insert(cryptoWallets).values(wallets);
+  console.log("Seeded new crypto wallets.");
 
   console.log("Seeding complete.");
   process.exit(0);
