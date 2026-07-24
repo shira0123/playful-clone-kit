@@ -11,7 +11,7 @@ const KEY_BYTES = 32;
 export async function hashPassword(password: string): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(SALT_BYTES));
   const key = await deriveKey(password, salt);
-  const hash = new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: PBKDF2_ITERATIONS, hash: "SHA-256" }, key, KEY_BYTES * 8));
+  const hash = new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt: salt.buffer as ArrayBuffer, iterations: PBKDF2_ITERATIONS, hash: "SHA-256" }, key, KEY_BYTES * 8));
   return `pbkdf2:${PBKDF2_ITERATIONS}:${toBase64(salt)}:${toBase64(hash)}`;
 }
 
@@ -22,7 +22,7 @@ export async function verifyPassword(password: string, stored: string): Promise<
   const salt = fromBase64(parts[2]);
   const expectedHash = fromBase64(parts[3]);
   const key = await deriveKey(password, salt, iterations);
-  const actualHash = new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations, hash: "SHA-256" }, key, expectedHash.length * 8));
+  const actualHash = new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt: salt.buffer as ArrayBuffer, iterations, hash: "SHA-256" }, key, expectedHash.length * 8));
   return timingSafeEqual(expectedHash, actualHash);
 }
 

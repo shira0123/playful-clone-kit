@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageLayout, PageHero } from "@/components/site/PageLayout";
 import { Stagger, StaggerItem } from "@/components/site/motion/Reveal";
 import { Check } from "lucide-react";
@@ -47,7 +47,7 @@ function InvestmentPage() {
                     </li>
                   ))}
                 </ul>
-                <a href="https://app.e-directpro.com/register" className={`mt-8 block text-center rounded-md py-3 font-semibold transition-all hover:-translate-y-0.5 ${p.popular ? "bg-gold text-navy hover:brightness-110" : "bg-navy text-white hover:bg-navy/90"}`}>Invest Now</a>
+                <Link to="/register" className={`mt-8 block text-center rounded-md py-3 font-semibold transition-all hover:-translate-y-0.5 ${p.popular ? "bg-gold text-navy hover:brightness-110" : "bg-navy text-white hover:bg-navy/90"}`}>Invest Now</Link>
               </div>
             </StaggerItem>
           ))}

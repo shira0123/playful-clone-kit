@@ -80,3 +80,17 @@ export const adminDeleteUser = createServerFn({ method: "POST" }).validator(user
 export const adminResetPassword = createServerFn({ method: "POST" }).validator(userId).handler(async ({ data }) => { await admin.sendAdminPasswordReset(data.userId); return { ok: true }; });
 export const adminImpersonateUser = createServerFn({ method: "POST" }).validator(userId).handler(async ({ data }) => { await admin.impersonateUser(data.userId); return { ok: true }; });
 export const getAuditLogs = createServerFn({ method: "GET" }).handler(() => admin.recentAuditLogs());
+
+import * as investment from "./server/services/investment";
+import * as adminInvestment from "./server/services/admin-investments";
+
+export const getInvestmentPlans = createServerFn({ method: "GET" }).handler(() => investment.getInvestmentPlans());
+export const getCryptoWallets = createServerFn({ method: "GET" }).handler(() => investment.getCryptoWallets());
+export const submitInvestment = createServerFn({ method: "POST" }).validator(z.object({ planId: z.string().uuid(), amount: z.number().min(1) })).handler(async ({ data }) => { return investment.submitInvestment(data.planId, data.amount); });
+export const getUserInvestments = createServerFn({ method: "GET" }).handler(() => investment.getUserInvestments());
+export const getPortfolioStats = createServerFn({ method: "GET" }).handler(() => investment.getPortfolioStats());
+
+export const getAdminInvestments = createServerFn({ method: "GET" }).validator(z.object({ query: z.string().max(100).optional(), page: z.number().int().min(0).max(1000).optional() })).handler(({ data }) => adminInvestment.getAllInvestments(data.query, data.page));
+export const approveInvestment = createServerFn({ method: "POST" }).validator(z.object({ id: z.string().uuid() })).handler(async ({ data }) => { await adminInvestment.approveInvestment(data.id); return { ok: true }; });
+export const rejectInvestment = createServerFn({ method: "POST" }).validator(z.object({ id: z.string().uuid() })).handler(async ({ data }) => { await adminInvestment.rejectInvestment(data.id); return { ok: true }; });
+export const getAdminInvestmentStats = createServerFn({ method: "GET" }).handler(() => adminInvestment.getAdminInvestmentStats());

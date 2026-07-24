@@ -42,7 +42,7 @@ function Notifications() {
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      await markNotificationRead({ notificationId: id });
+      await markNotificationRead({ data: { notificationId: id } });
       toast.success("Notification marked as read");
       fetchNotifications();
     } catch (error) {

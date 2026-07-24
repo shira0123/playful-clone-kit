@@ -47,7 +47,7 @@ function Settings() {
 
     try {
       setIsChangingPassword(true);
-      await changeUserPassword({ currentPassword, newPassword });
+      await changeUserPassword({ data: { currentPassword, newPassword } });
       toast.success("Password changed successfully.");
       setCurrentPassword("");
       setNewPassword("");
@@ -67,7 +67,7 @@ function Settings() {
 
     try {
       setIsDeletingAccount(true);
-      await deleteUserAccount({ password: deletePassword });
+      await deleteUserAccount({ data: { password: deletePassword } });
       toast.success("Account deleted successfully.");
       setIsDeleteDialogOpen(false);
       navigate({ to: "/" });

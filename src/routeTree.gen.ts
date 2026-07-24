@@ -23,8 +23,10 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
+import { Route as AdminInvestmentsRouteImport } from './routes/admin.investments'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as DashboardActivityRouteImport } from './routes/dashboard.activity'
+import { Route as DashboardInvestmentsRouteImport } from './routes/dashboard.investments'
 import { Route as DashboardNotificationsRouteImport } from './routes/dashboard.notifications'
 import { Route as DashboardProfileRouteImport } from './routes/dashboard.profile'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
@@ -99,6 +101,11 @@ const AdminAuditRoute = AdminAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminInvestmentsRoute = AdminInvestmentsRouteImport.update({
+  id: '/investments',
+  path: '/investments',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -107,6 +114,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
 const DashboardActivityRoute = DashboardActivityRouteImport.update({
   id: '/activity',
   path: '/activity',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardInvestmentsRoute = DashboardInvestmentsRouteImport.update({
+  id: '/investments',
+  path: '/investments',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
@@ -140,8 +152,10 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/verify-email': typeof VerifyEmailRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/investments': typeof AdminInvestmentsRoute
   '/admin/users': typeof AdminUsersRoute
   '/dashboard/activity': typeof DashboardActivityRoute
+  '/dashboard/investments': typeof DashboardInvestmentsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -161,8 +175,10 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/verify-email': typeof VerifyEmailRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/investments': typeof AdminInvestmentsRoute
   '/admin/users': typeof AdminUsersRoute
   '/dashboard/activity': typeof DashboardActivityRoute
+  '/dashboard/investments': typeof DashboardInvestmentsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -183,8 +199,10 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/verify-email': typeof VerifyEmailRoute
   '/admin/audit': typeof AdminAuditRoute
+  '/admin/investments': typeof AdminInvestmentsRoute
   '/admin/users': typeof AdminUsersRoute
   '/dashboard/activity': typeof DashboardActivityRoute
+  '/dashboard/investments': typeof DashboardInvestmentsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -206,8 +224,10 @@ export interface FileRouteTypes {
     | '/services'
     | '/verify-email'
     | '/admin/audit'
+    | '/admin/investments'
     | '/admin/users'
     | '/dashboard/activity'
+    | '/dashboard/investments'
     | '/dashboard/notifications'
     | '/dashboard/profile'
     | '/dashboard/settings'
@@ -227,8 +247,10 @@ export interface FileRouteTypes {
     | '/services'
     | '/verify-email'
     | '/admin/audit'
+    | '/admin/investments'
     | '/admin/users'
     | '/dashboard/activity'
+    | '/dashboard/investments'
     | '/dashboard/notifications'
     | '/dashboard/profile'
     | '/dashboard/settings'
@@ -248,8 +270,10 @@ export interface FileRouteTypes {
     | '/services'
     | '/verify-email'
     | '/admin/audit'
+    | '/admin/investments'
     | '/admin/users'
     | '/dashboard/activity'
+    | '/dashboard/investments'
     | '/dashboard/notifications'
     | '/dashboard/profile'
     | '/dashboard/settings'
@@ -371,6 +395,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuditRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/investments': {
+      id: '/admin/investments'
+      path: '/investments'
+      fullPath: '/admin/investments'
+      preLoaderRoute: typeof AdminInvestmentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -383,6 +414,13 @@ declare module '@tanstack/react-router' {
       path: '/activity'
       fullPath: '/dashboard/activity'
       preLoaderRoute: typeof DashboardActivityRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/investments': {
+      id: '/dashboard/investments'
+      path: '/investments'
+      fullPath: '/dashboard/investments'
+      preLoaderRoute: typeof DashboardInvestmentsRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/notifications': {
@@ -411,11 +449,13 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
+  AdminInvestmentsRoute: typeof AdminInvestmentsRoute
   AdminUsersRoute: typeof AdminUsersRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
+  AdminInvestmentsRoute: AdminInvestmentsRoute,
   AdminUsersRoute: AdminUsersRoute,
 }
 
@@ -423,6 +463,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface DashboardRouteChildren {
   DashboardActivityRoute: typeof DashboardActivityRoute
+  DashboardInvestmentsRoute: typeof DashboardInvestmentsRoute
   DashboardNotificationsRoute: typeof DashboardNotificationsRoute
   DashboardProfileRoute: typeof DashboardProfileRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
@@ -430,6 +471,7 @@ interface DashboardRouteChildren {
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardActivityRoute: DashboardActivityRoute,
+  DashboardInvestmentsRoute: DashboardInvestmentsRoute,
   DashboardNotificationsRoute: DashboardNotificationsRoute,
   DashboardProfileRoute: DashboardProfileRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,

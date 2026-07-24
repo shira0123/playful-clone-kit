@@ -1,11 +1,14 @@
 import { z } from "zod";
 
+/** Treat empty strings as undefined so optional fields pass validation */
+const optionalString = z.string().transform((s) => (s === "" ? undefined : s)).pipe(z.string().min(1).optional());
+
 const schema = z.object({
-  DATABASE_URL: z.string().url().optional(),
+  DATABASE_URL: z.string().transform((s) => (s === "" ? undefined : s)).pipe(z.string().url().optional()),
   APP_URL: z.string().url().default("http://localhost:3000"),
   SESSION_COOKIE_NAME: z.string().min(1).default("evolve_session"),
-  EMAIL_FROM: z.string().min(3).optional(),
-  RESEND_API_KEY: z.string().min(1).optional(),
+  EMAIL_FROM: optionalString,
+  RESEND_API_KEY: optionalString,
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 });
 
@@ -19,6 +22,12 @@ export const env = schema.parse({
 });
 
 export function requireDatabaseUrl(): string {
-  if (!env.DATABASE_URL) throw new Error("DATABASE_URL is required to use the backend.");
-  return env.DATABASE_URL;
+  const url = process.env.DATABASE_URL || env.DATABASE_URL;
+  if (!url) {
+    throw new Error(
+      "DATABASE_URL is not set. Please create a .env file with DATABASE_URL=postgres://user:password@localhost:5432/dbname",
+    );
+  }
+  return url;
 }
+

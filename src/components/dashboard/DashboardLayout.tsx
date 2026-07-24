@@ -42,14 +42,15 @@ export function DashboardLayout({
 
   const userNavItems = [
     { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
+    { to: "/dashboard/investments", label: "Investments", icon: Activity },
     { to: "/dashboard/profile", label: "Profile", icon: User },
     { to: "/dashboard/settings", label: "Settings", icon: Settings },
     { to: "/dashboard/notifications", label: "Notifications", icon: Bell },
-    { to: "/dashboard/activity", label: "Activity", icon: Activity },
   ];
 
   const adminNavItems = [
     { to: "/admin", label: "Overview", icon: Shield },
+    { to: "/admin/investments", label: "Investments", icon: Activity },
     { to: "/admin/users", label: "Users", icon: UsersIcon },
     { to: "/admin/audit", label: "Audit Logs", icon: ScrollText },
   ];

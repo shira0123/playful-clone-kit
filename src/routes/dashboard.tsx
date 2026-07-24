@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { getCurrentUser, getNotifications } from "@/server-fns";
+import { getCurrentUser, getNotifications, getPortfolioStats } from "@/server-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,9 @@ import {
   User, 
   Settings, 
   Activity, 
-  ArrowRight 
+  ArrowRight,
+  TrendingUp,
+  Wallet
 } from "lucide-react";
 
 type SafeUser = {
@@ -34,6 +36,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState<SafeUser | null>(null);
   const [notifications, setNotifications] = useState<Array<{ id: string; title: string; body: string }>>([]);
+  const [stats, setStats] = useState({ totalInvested: 0, activeCount: 0, pendingCount: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,8 +44,13 @@ function Dashboard() {
       if (!u) return navigate({ to: "/login" });
       if (u.role === "admin") return navigate({ to: "/admin" });
       setUser(u as SafeUser);
-      return getNotifications().then((notes) => {
+      
+      Promise.all([
+        getNotifications(),
+        getPortfolioStats()
+      ]).then(([notes, portfolioStats]) => {
         setNotifications(notes);
+        setStats(portfolioStats);
         setLoading(false);
       });
     });
@@ -70,10 +78,16 @@ function Dashboard() {
       userName={`${user.firstName} ${user.lastName}`.trim()}
       userEmail={user.email}
     >
-      <p className="mt-2 text-muted-foreground">Your secure account overview and recent updates.</p>
+      <p className="mt-2 text-muted-foreground">Your secure account overview and portfolio updates.</p>
 
       {/* Quick Actions Row */}
       <div className="mt-6 flex flex-wrap gap-4">
+        <Button asChild className="bg-gold text-navy hover:brightness-110">
+          <Link to="/dashboard/investments">
+            <TrendingUp className="mr-2 h-4 w-4" />
+            Invest Now
+          </Link>
+        </Button>
         <Button asChild variant="outline">
           <Link to="/dashboard/profile">
             <User className="mr-2 h-4 w-4" />
@@ -83,13 +97,7 @@ function Dashboard() {
         <Button asChild variant="outline">
           <Link to="/dashboard/settings">
             <Settings className="mr-2 h-4 w-4" />
-            Change Password
-          </Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link to="/dashboard/activity">
-            <Activity className="mr-2 h-4 w-4" />
-            View Activity
+            Settings
           </Link>
         </Button>
       </div>
@@ -97,44 +105,30 @@ function Dashboard() {
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Account Status</CardTitle>
-            <ShieldCheck className="h-4 w-4 text-green-500" />
+            <CardTitle className="text-sm font-medium">Total Invested</CardTitle>
+            <Wallet className="h-4 w-4 text-gold" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                Active
-              </Badge>
+              ${stats.totalInvested.toLocaleString()}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Your account is in good standing
+              Active portfolio balance
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Email Verification</CardTitle>
-            {user.emailVerified ? (
-              <CheckCircle className="h-4 w-4 text-green-500" />
-            ) : (
-              <AlertCircle className="h-4 w-4 text-amber-500" />
-            )}
+            <CardTitle className="text-sm font-medium">Active Plans</CardTitle>
+            <Activity className="h-4 w-4 text-navy" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {user.emailVerified ? (
-                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                  Verified
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
-                  Unverified
-                </Badge>
-              )}
+              {stats.activeCount}
             </div>
-            <p className="mt-1 text-xs text-muted-foreground truncate" title={user.email}>
-              {user.email}
+            <p className="mt-1 text-xs text-muted-foreground">
+              {stats.pendingCount > 0 ? `${stats.pendingCount} pending approval` : 'No pending approvals'}
             </p>
           </CardContent>
         </Card>

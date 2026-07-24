@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, index, inet, jsonb, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, index, inet, integer, jsonb, numeric, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -8,6 +8,7 @@ const timestamps = {
 
 export const userRole = pgEnum("user_role", ["user", "admin"]);
 export const userStatus = pgEnum("user_status", ["active", "suspended"]);
+export const investmentStatus = pgEnum("investment_status", ["pending", "active", "completed", "rejected"]);
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -79,7 +80,54 @@ export const notifications = pgTable("notifications", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [index("notifications_user_id_idx").on(table.userId)]);
 
+export const investmentPlans = pgTable("investment_plans", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: text("name").notNull(),
+  priceAmount: integer("price_amount").notNull(),
+  roiDisplay: text("roi_display").notNull(),
+  durationDisplay: text("duration_display").notNull(),
+  features: jsonb("features").notNull().$type<string[]>(),
+  isPopular: boolean("is_popular").notNull().default(false),
+  isActive: boolean("is_active").notNull().default(true),
+  ...timestamps,
+});
+
+export const cryptoWallets = pgTable("crypto_wallets", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  network: text("network").notNull(),
+  address: text("address").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  ...timestamps,
+});
+
+export const investments = pgTable("investments", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  planId: uuid("plan_id").notNull().references(() => investmentPlans.id, { onDelete: "restrict" }),
+  amount: integer("amount").notNull(),
+  cryptoAddressUsed: text("crypto_address_used"),
+  status: investmentStatus("status").notNull().default("pending"),
+  startedAt: timestamp("started_at", { withTimezone: true }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
+  ...timestamps,
+}, (table) => [
+  index("investments_user_id_idx").on(table.userId),
+  index("investments_status_idx").on(table.status),
+]);
+
 export const usersRelations = relations(users, ({ one, many }) => ({
-  profile: one(profiles), sessions: many(sessions), notifications: many(notifications),
+  profile: one(profiles), 
+  sessions: many(sessions), 
+  notifications: many(notifications),
+  investments: many(investments),
 }));
 export const profilesRelations = relations(profiles, ({ one }) => ({ user: one(users, { fields: [profiles.userId], references: [users.id] }) }));
+
+export const investmentPlansRelations = relations(investmentPlans, ({ many }) => ({
+  investments: many(investments),
+}));
+
+export const investmentsRelations = relations(investments, ({ one }) => ({
+  user: one(users, { fields: [investments.userId], references: [users.id] }),
+  plan: one(investmentPlans, { fields: [investments.planId], references: [investmentPlans.id] }),
+}));
