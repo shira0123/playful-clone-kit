@@ -65,7 +65,7 @@ function Users() {
 
   const load = (q: string, p: number) => {
     setIsLoading(true);
-    getAdminUsers({ data: { query: q, page: p } })
+    getAdminUsers({ data: { query: q, page: p - 1 } })
       .then(setUsers)
       .catch(() => toast.error("Unable to load users."))
       .finally(() => setIsLoading(false));
