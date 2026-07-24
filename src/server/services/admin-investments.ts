@@ -1,10 +1,10 @@
-import { desc, eq, ilike, or } from "drizzle-orm";
+import { and, desc, eq, ilike, ne, or } from "drizzle-orm";
 import { db } from "../db";
 import { investmentPlans, investments, profiles, users } from "../db/schema";
 import { requireAdmin } from "./auth";
 
 export async function getAllInvestments(query = "", page = 0) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   
   const term = `%${query.trim()}%`;
   const filter = query 
@@ -31,7 +31,7 @@ export async function getAllInvestments(query = "", page = 0) {
     .innerJoin(users, eq(investments.userId, users.id))
     .innerJoin(profiles, eq(users.id, profiles.userId))
     .innerJoin(investmentPlans, eq(investments.planId, investmentPlans.id))
-    .where(filter)
+    .where(and(filter, ne(users.id, admin.id)))
     .orderBy(desc(investments.createdAt))
     .limit(25)
     .offset(page * 25);
@@ -49,6 +49,16 @@ export async function approveInvestment(id: string) {
 }
 
 export async function rejectInvestment(id: string) {
+  await requireAdmin();
+  await db.update(investments)
+    .set({ 
+      status: "rejected", 
+      updatedAt: new Date()
+    })
+    .where(eq(investments.id, id));
+}
+
+export async function cancelInvestment(id: string) {
   await requireAdmin();
   await db.update(investments)
     .set({ 

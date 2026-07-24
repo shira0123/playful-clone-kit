@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { getAdminInvestments, approveInvestment, rejectInvestment } from "@/server-fns";
+import { getAdminInvestments, approveInvestment, rejectInvestment, cancelInvestment } from "@/server-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -67,6 +67,17 @@ function AdminInvestments() {
     }
   };
 
+  const handleCancel = async (id: string) => {
+    if (!confirm("Are you sure you want to cancel this active investment?")) return;
+    try {
+      await cancelInvestment({ data: { id } });
+      toast.success("Investment cancelled successfully");
+      await loadData();
+    } catch (err) {
+      toast.error("Failed to cancel investment");
+    }
+  };
+
   return (
     <DashboardLayout admin title="Manage Investments">
       <p className="mt-2 text-muted-foreground mb-6">Review and approve user investment requests.</p>
@@ -124,6 +135,13 @@ function AdminInvestments() {
                             </Button>
                             <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleReject(inv.id)}>
                               <X className="h-4 w-4 mr-1" /> Reject
+                            </Button>
+                          </div>
+                        )}
+                        {inv.status === "active" && (
+                          <div className="flex justify-end gap-2">
+                            <Button size="sm" variant="outline" className="text-slate-600 hover:text-slate-700 hover:bg-slate-50" onClick={() => handleCancel(inv.id)}>
+                              <X className="h-4 w-4 mr-1" /> Cancel Plan
                             </Button>
                           </div>
                         )}

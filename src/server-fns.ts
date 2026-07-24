@@ -93,4 +93,5 @@ export const getPortfolioStats = createServerFn({ method: "GET" }).handler(() =>
 export const getAdminInvestments = createServerFn({ method: "GET" }).validator(z.object({ query: z.string().max(100).optional(), page: z.number().int().min(0).max(1000).optional() })).handler(({ data }) => adminInvestment.getAllInvestments(data.query, data.page));
 export const approveInvestment = createServerFn({ method: "POST" }).validator(z.object({ id: z.string().uuid() })).handler(async ({ data }) => { await adminInvestment.approveInvestment(data.id); return { ok: true }; });
 export const rejectInvestment = createServerFn({ method: "POST" }).validator(z.object({ id: z.string().uuid() })).handler(async ({ data }) => { await adminInvestment.rejectInvestment(data.id); return { ok: true }; });
+export const cancelInvestment = createServerFn({ method: "POST" }).validator(z.object({ id: z.string().uuid() })).handler(async ({ data }) => { await adminInvestment.cancelInvestment(data.id); return { ok: true }; });
 export const getAdminInvestmentStats = createServerFn({ method: "GET" }).handler(() => adminInvestment.getAdminInvestmentStats());

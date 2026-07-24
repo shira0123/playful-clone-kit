@@ -62,6 +62,7 @@ function Users() {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [userToVerify, setUserToVerify] = useState<User | null>(null);
 
   const load = (q: string, p: number) => {
     setIsLoading(true);
@@ -80,8 +81,8 @@ function Users() {
       await action();
       toast.success(successMessage);
       load(searchQuery, page);
-    } catch (error) {
-      toast.error("Action failed.");
+    } catch (error: any) {
+      toast.error(error?.message || "Action failed.");
     }
   }
 
@@ -169,7 +170,7 @@ function Users() {
                           </DropdownMenuItem>
                           
                           {!user.emailVerifiedAt && (
-                            <DropdownMenuItem onClick={() => void act(() => adminVerifyEmail({ data: { userId: user.id } }), "Email verified.")}>
+                            <DropdownMenuItem onClick={() => setUserToVerify(user)}>
                               <ShieldCheck className="mr-2 h-4 w-4" /> Verify Email
                             </DropdownMenuItem>
                           )}
@@ -241,6 +242,31 @@ function Users() {
               }}
             >
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!userToVerify} onOpenChange={(open) => !open && setUserToVerify(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Forcibly Verify Email?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to verify the email address <span className="font-semibold">{userToVerify?.email}</span>? This will allow the user to access the dashboard even if they haven't verified their email manually.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-navy hover:bg-navy/90" 
+              onClick={() => {
+                if (userToVerify) {
+                  void act(() => adminVerifyEmail({ data: { userId: userToVerify.id } }), "Email verified.");
+                  setUserToVerify(null);
+                }
+              }}
+            >
+              Verify User
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
