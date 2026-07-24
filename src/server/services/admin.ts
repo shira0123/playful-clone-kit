@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, ne, or, sql } from "drizzle-orm";
 import { db } from "../db";
 import { auditLogs, profiles, sessions, users } from "../db/schema";
 import { createSession, requireAdmin, requestPasswordReset } from "./auth";
