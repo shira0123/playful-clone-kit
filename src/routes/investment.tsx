@@ -17,10 +17,10 @@ export const Route = createFileRoute("/investment")({
 });
 
 const plans = [
-  { name: "Starter", price: "$200", roi: "5% weekly", duration: "7 days", features: ["Instant activation", "24/7 support", "Withdrawal anytime"] },
-  { name: "Silver", price: "$1,000", roi: "8% weekly", duration: "14 days", features: ["All Starter benefits", "Dedicated advisor", "Priority execution"], popular: true },
-  { name: "Gold", price: "$5,000", roi: "12% weekly", duration: "30 days", features: ["All Silver benefits", "Custom strategies", "Quarterly reviews"] },
-  { name: "Platinum", price: "$25,000+", roi: "Custom", duration: "Flexible", features: ["Bespoke portfolio", "Private banker", "Institutional access"] },
+  { name: "Beginners Plan", price: "$200", roi: "3% Daily", duration: "24 Hours", features: ["Min: $200", "Max: $3,999", "3% Daily R.O.I", "24hrs Duration", "2% Referral Bonus", "24/7 Support: Yes"] },
+  { name: "Standard Plan", price: "$5,000", roi: "5% Daily", duration: "5 Days", features: ["Min: $5,000", "Max: $9,999", "5% Daily R.O.I", "5 Days Duration", "4% Referral Bonus", "24/7 Support: Yes"], popular: true },
+  { name: "Advanced Plan", price: "$10,000", roi: "8% Daily", duration: "21 Days", features: ["Min: $10,000", "Max: $29,000", "8% Daily R.O.I", "21 Days Duration", "4% Referral Bonus", "24/7 Support: Yes"] },
+  { name: "Professional Plan", price: "$30,000", roi: "12% Daily", duration: "Optional", features: ["Min: $30,000", "Max: Unlimited", "12% Daily R.O.I", "Optional Duration", "4% Referral Bonus", "24/7 Support: Yes"] },
 ];
 
 function InvestmentPage() {

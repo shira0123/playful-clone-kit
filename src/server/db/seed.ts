@@ -8,51 +8,77 @@ async function main() {
 
   const plans = [
     {
-      name: "Starter",
+      name: "Beginners Plan",
       priceAmount: 200,
-      roiDisplay: "5% weekly",
-      durationDisplay: "7 days",
-      features: ["Instant activation", "24/7 support", "Withdrawal anytime"],
+      roiDisplay: "3% Daily",
+      durationDisplay: "24 Hours",
+      features: [
+        "Min: $200",
+        "Max: $3,999",
+        "R.O.I: 3% Daily",
+        "Duration: 24hrs",
+        "Referral Bonus: 2%",
+        "24/7 Support: Yes"
+      ],
       isPopular: false,
       isActive: true,
     },
     {
-      name: "Silver",
-      priceAmount: 1000,
-      roiDisplay: "8% weekly",
-      durationDisplay: "14 days",
-      features: ["All Starter benefits", "Dedicated advisor", "Priority execution"],
+      name: "Standard Plan",
+      priceAmount: 5000,
+      roiDisplay: "5% Daily for 5 Days",
+      durationDisplay: "5 Days",
+      features: [
+        "Min: $5,000",
+        "Max: $9,999",
+        "R.O.I: 5% Daily",
+        "Duration: 5 Days",
+        "Referral Bonus: 4%",
+        "24/7 Support: Yes"
+      ],
       isPopular: true,
       isActive: true,
     },
     {
-      name: "Gold",
-      priceAmount: 5000,
-      roiDisplay: "12% weekly",
-      durationDisplay: "30 days",
-      features: ["All Silver benefits", "Custom strategies", "Quarterly reviews"],
+      name: "Advanced Plan",
+      priceAmount: 10000,
+      roiDisplay: "8% Daily for 21 Days",
+      durationDisplay: "21 Days",
+      features: [
+        "Min: $10,000",
+        "Max: $29,000",
+        "R.O.I: 8% Daily",
+        "Duration: 21 Days",
+        "Referral Bonus: 4%",
+        "24/7 Support: Yes"
+      ],
       isPopular: false,
       isActive: true,
     },
     {
-      name: "Platinum",
-      priceAmount: 25000,
-      roiDisplay: "Custom",
-      durationDisplay: "Flexible",
-      features: ["Bespoke portfolio", "Private banker", "Institutional access"],
+      name: "Professional Plan",
+      priceAmount: 30000,
+      roiDisplay: "12% Daily",
+      durationDisplay: "Optional",
+      features: [
+        "Min: $30,000",
+        "Max: Unlimited",
+        "R.O.I: 12% Daily",
+        "Duration: Optional",
+        "Referral Bonus: 4%",
+        "24/7 Support: Yes"
+      ],
       isPopular: false,
       isActive: true,
     },
   ];
 
+  const { investments } = await import("./schema");
+  await db.delete(investments);
+  await db.delete(investmentPlans);
   for (const plan of plans) {
-    const existing = await db.select().from(investmentPlans).where(eq(investmentPlans.name, plan.name));
-    if (existing.length === 0) {
-      await db.insert(investmentPlans).values(plan);
-      console.log(`Inserted plan: ${plan.name}`);
-    } else {
-      console.log(`Plan already exists: ${plan.name}`);
-    }
+    await db.insert(investmentPlans).values(plan);
+    console.log(`Inserted plan: ${plan.name}`);
   }
 
   console.log("Seeding crypto wallets...");
