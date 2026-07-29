@@ -7,9 +7,9 @@ import { useState } from "react";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — Evolve Digital Trade" },
-      { name: "description", content: "Get in touch with the Evolve Digital Trade support and investment team." },
-      { property: "og:title", content: "Contact Us — Evolve Digital Trade" },
+      { title: "Contact Us — EVOLVE TRADE HUB" },
+      { name: "description", content: "Get in touch with the EVOLVE TRADE HUB support and investment team." },
+      { property: "og:title", content: "Contact Us — EVOLVE TRADE HUB" },
       { property: "og:url", content: "/contact" },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
@@ -28,7 +28,7 @@ function ContactPage() {
             <h2 className="font-display text-3xl text-navy font-bold">Get in touch</h2>
             <p className="mt-3 text-muted-foreground">Our team typically replies within one business day.</p>
             <div className="mt-8 space-y-4 text-sm">
-              <div className="flex items-start gap-3"><Mail className="text-gold mt-0.5 shrink-0" size={18} /><span className="min-w-0 break-words">support@evolvedigitaltrade.com</span></div>
+              <div className="flex items-start gap-3"><Mail className="text-gold mt-0.5 shrink-0" size={18} /><span className="min-w-0 break-words">support@evolvetradehub.com</span></div>
               <div className="flex items-start gap-3"><Phone className="text-gold mt-0.5 shrink-0" size={18} /><span>+44 20 8080 0000</span></div>
               <div className="flex items-start gap-3"><MapPin className="text-gold mt-0.5 shrink-0" size={18} /><span>Registered office · United Kingdom</span></div>
             </div>

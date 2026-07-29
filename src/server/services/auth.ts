@@ -40,7 +40,7 @@ export async function register(input: { email: string; password: string; firstNa
   assert(!(await getUserByEmail(input.email)), 409, "An account with that email already exists.");
   const [user] = await db.insert(users).values({ email: input.email, passwordHash: await hashPassword(input.password) }).returning({ id: users.id, email: users.email });
   await db.insert(profiles).values({ userId: user.id, firstName: input.firstName, lastName: input.lastName });
-  await db.insert(notifications).values({ userId: user.id, title: "Welcome to Evolve Digital Trade", body: "Please verify your email to secure your account." });
+  await db.insert(notifications).values({ userId: user.id, title: "Welcome to EVOLVE TRADE HUB", body: "Please verify your email to secure your account." });
   await email.verification(user.email, await issueToken(emailVerificationTokens, user.id, 86_400_000));
 }
 export async function login(input: { email: string; password: string }) {

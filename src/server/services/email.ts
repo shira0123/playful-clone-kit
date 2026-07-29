@@ -100,7 +100,7 @@ function layout(content: string) {
     <table class="main" cellspacing="0" cellpadding="0">
       <tr>
         <td class="header">
-          <h1>EVOLVE DIGITAL TRADE</h1>
+          <h1>EVOLVE TRADE HUB</h1>
         </td>
       </tr>
       <tr>
@@ -110,7 +110,7 @@ function layout(content: string) {
       </tr>
       <tr>
         <td class="footer">
-          <p>&copy; ${new Date().getFullYear()} Evolve Digital Trade. All rights reserved.</p>
+          <p>&copy; ${new Date().getFullYear()} EVOLVE TRADE HUB. All rights reserved.</p>
           <p>This is an automated message, please do not reply directly to this email.</p>
         </td>
       </tr>
@@ -125,7 +125,7 @@ export const email = {
   verification: (to: string, token: string) => {
     const link = `${env.APP_URL}/verify-email?token=${encodeURIComponent(token)}`;
     const html = layout(`
-      <h2>Welcome to Evolve Digital Trade</h2>
+      <h2>Welcome to EVOLVE TRADE HUB</h2>
       <p>Thank you for registering with us. We're excited to have you on board!</p>
       <p>To get started, please verify your email address by clicking the button below:</p>
       <div class="button-container">
@@ -135,14 +135,14 @@ export const email = {
       <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
       <p style="font-size: 12px; word-break: break-all; color: #888;"><a href="${link}" style="color: #c5a55a;">${link}</a></p>
     `);
-    return send(to, "Verify your Evolve Digital Trade email", html);
+    return send(to, "Verify your EVOLVE TRADE HUB email", html);
   },
   
   passwordReset: (to: string, token: string) => {
     const link = `${env.APP_URL}/reset-password?token=${encodeURIComponent(token)}`;
     const html = layout(`
       <h2>Password Reset Request</h2>
-      <p>We received a request to reset the password for your Evolve Digital Trade account.</p>
+      <p>We received a request to reset the password for your EVOLVE TRADE HUB account.</p>
       <p>Click the button below to choose a new password:</p>
       <div class="button-container">
         <a href="${link}" class="button">Reset Password</a>
@@ -156,7 +156,7 @@ export const email = {
   welcome: (to: string) => {
     const html = layout(`
       <h2>Your Account is Ready</h2>
-      <p>Your email has been verified and your Evolve Digital Trade account is fully activated.</p>
+      <p>Your email has been verified and your EVOLVE TRADE HUB account is fully activated.</p>
       <p>Here are a few things you can do to get started:</p>
       <ul>
         <li>Complete your profile information</li>
@@ -168,6 +168,6 @@ export const email = {
       </div>
       <p>If you have any questions, our support team is always here to help.</p>
     `);
-    return send(to, "Welcome to Evolve Digital Trade", html);
+    return send(to, "Welcome to EVOLVE TRADE HUB", html);
   }
 };

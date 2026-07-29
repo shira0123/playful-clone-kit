@@ -70,7 +70,7 @@ export function DashboardLayout({
     <div className="flex h-full flex-col">
       <div className="p-6">
         <Link to="/" className="font-display text-xl font-bold tracking-tight text-navy">
-          EVOLVE <span className="text-gold">DIGITAL TRADE</span>
+          EVOLVE <span className="text-gold">TRADE HUB</span>
         </Link>
       </div>
 
@@ -120,7 +120,7 @@ export function DashboardLayout({
       {/* Mobile Header */}
       <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-navy px-4 text-white lg:hidden">
         <Link to="/" className="font-display text-lg font-bold">
-          EVOLVE <span className="text-gold">DIGITAL TRADE</span>
+          EVOLVE <span className="text-gold">TRADE HUB</span>
         </Link>
         <Sheet>
           <SheetTrigger asChild>

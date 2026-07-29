@@ -6,9 +6,9 @@ import { Check } from "lucide-react";
 export const Route = createFileRoute("/investment")({
   head: () => ({
     meta: [
-      { title: "Investment Plans — Evolve Digital Trade" },
-      { name: "description", content: "Explore Evolve Digital Trade investment plans starting at $200. Transparent, regulated, and A.I.-managed." },
-      { property: "og:title", content: "Investment Plans — Evolve Digital Trade" },
+      { title: "Investment Plans — EVOLVE TRADE HUB" },
+      { name: "description", content: "Explore EVOLVE TRADE HUB investment plans starting at $200. Transparent, regulated, and A.I.-managed." },
+      { property: "og:title", content: "Investment Plans — EVOLVE TRADE HUB" },
       { property: "og:url", content: "/investment" },
     ],
     links: [{ rel: "canonical", href: "/investment" }],

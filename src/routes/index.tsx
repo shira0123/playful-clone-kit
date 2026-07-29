@@ -55,7 +55,7 @@ function HomePage() {
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             className="font-display text-4xl sm:text-5xl md:text-7xl font-bold leading-tight"
           >
-            Evolve Digital Trade
+            EVOLVE TRADE HUB
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -175,7 +175,7 @@ function HomePage() {
             <p className="uppercase text-xs tracking-widest text-gold font-semibold">Copy Trading</p>
             <h2 className="mt-2 font-display text-3xl sm:text-4xl text-navy font-bold">Copy the trades of other traders — all in one App</h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
-              At Evolve Digital Trade, we believe everyone should have easy, fast, and free access
+              At EVOLVE TRADE HUB, we believe everyone should have easy, fast, and free access
               to the global financial markets. That's why we've built the most powerful app for
               finance.
             </p>
@@ -247,7 +247,7 @@ function HomePage() {
             <p className="uppercase text-xs tracking-widest text-gold font-semibold">Investment</p>
             <h2 className="mt-2 font-display text-4xl md:text-5xl text-navy font-bold">Diversify your investment portfolio</h2>
             <p className="mt-4 text-muted-foreground">
-              Evolve Digital Trade is fully approved and officially registered, regulated by
+              EVOLVE TRADE HUB is fully approved and officially registered, regulated by
               financial authorities under the jurisdiction of the United Kingdom. We trade and
               earn — you share the returns.
             </p>
@@ -275,7 +275,7 @@ function HomePage() {
       <section className="bg-secondary py-20 md:py-28 px-4">
         <div className="mx-auto max-w-5xl text-center">
           <Reveal>
-            <p className="uppercase text-xs tracking-widest text-gold font-semibold">The Evolve Advantage</p>
+            <p className="uppercase text-xs tracking-widest text-gold font-semibold">The Evolve Trade Hub Advantage</p>
             <h2 className="mt-2 font-display text-3xl sm:text-4xl text-navy font-bold">The Revolution in Management</h2>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
               We work to the highest ethical standards of trading strategies, offering some of the

@@ -5,9 +5,9 @@ import { Stagger, StaggerItem } from "@/components/site/motion/Reveal";
 export const Route = createFileRoute("/insights")({
   head: () => ({
     meta: [
-      { title: "Insights — Evolve Digital Trade" },
-      { name: "description", content: "Market insights, analysis and updates from the Evolve Digital Trade research team." },
-      { property: "og:title", content: "Insights — Evolve Digital Trade" },
+      { title: "Insights — EVOLVE TRADE HUB" },
+      { name: "description", content: "Market insights, analysis and updates from the EVOLVE TRADE HUB research team." },
+      { property: "og:title", content: "Insights — EVOLVE TRADE HUB" },
       { property: "og:url", content: "/insights" },
     ],
     links: [{ rel: "canonical", href: "/insights" }],

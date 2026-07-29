@@ -8,9 +8,9 @@ import tradingFloor from "@/assets/trading-floor.jpg";
 export const Route = createFileRoute("/company")({
   head: () => ({
     meta: [
-      { title: "Our Company — Evolve Digital Trade" },
-      { name: "description", content: "Learn about Evolve Digital Trade — our mission, values, and regulated A.I. trading platform." },
-      { property: "og:title", content: "Our Company — Evolve Digital Trade" },
+      { title: "Our Company — EVOLVE TRADE HUB" },
+      { name: "description", content: "Learn about EVOLVE TRADE HUB — our mission, values, and regulated A.I. trading platform." },
+      { property: "og:title", content: "Our Company — EVOLVE TRADE HUB" },
       { property: "og:url", content: "/company" },
     ],
     links: [{ rel: "canonical", href: "/company" }],
@@ -53,7 +53,7 @@ function CompanyPage() {
             </p>
             <h2 className="mt-8 font-display text-3xl text-navy font-bold">Who We Are</h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
-              Evolve Digital Trade is a fully approved and officially registered company whose
+              EVOLVE TRADE HUB is a fully approved and officially registered company whose
               activities are regulated by financial control authorities under the jurisdiction of
               the United Kingdom. Our team combines quantitative research, engineering, and
               investment expertise to deliver a truly global platform.

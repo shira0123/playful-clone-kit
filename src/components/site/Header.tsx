@@ -44,7 +44,7 @@ export function Header() {
     >
       <div className={`mx-auto max-w-7xl px-4 sm:px-6 flex items-center justify-between gap-4 transition-all duration-300 ${scrolled ? "py-2" : "py-3"}`}>
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img src={logo} alt="Evolve Digital Trade" className={`w-auto bg-white rounded px-2 py-1 transition-all ${scrolled ? "h-8" : "h-9"}`} />
+          <img src={logo} alt="EVOLVE TRADE HUB" className={`w-auto bg-white rounded px-2 py-1 transition-all ${scrolled ? "h-8" : "h-9"}`} />
         </Link>
         <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-white/90">
           {nav.map((n) => (

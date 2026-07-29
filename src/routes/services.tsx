@@ -6,9 +6,9 @@ import { Bot, LineChart, Coins, Users, Wallet, ShieldCheck } from "lucide-react"
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Services — Evolve Digital Trade" },
+      { title: "Services — EVOLVE TRADE HUB" },
       { name: "description", content: "A.I. trading, portfolio management, copy trading, crypto investments and more." },
-      { property: "og:title", content: "Services — Evolve Digital Trade" },
+      { property: "og:title", content: "Services — EVOLVE TRADE HUB" },
       { property: "og:url", content: "/services" },
     ],
     links: [{ rel: "canonical", href: "/services" }],

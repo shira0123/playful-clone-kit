@@ -1,5 +1,5 @@
 # Setup and Management Manual
-## Evolve Digital Trade Platform
+## EVOLVE TRADE HUB Platform
 
 ### Overview
 This repository contains a full-stack web application built using modern TypeScript tools:

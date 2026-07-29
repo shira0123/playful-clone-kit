@@ -6,7 +6,7 @@ export function Footer() {
     <footer className="bg-navy text-white/80 mt-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 grid gap-10 md:grid-cols-4">
         <div>
-          <h3 className="font-display text-2xl text-white mb-3">Evolve Digital Trade</h3>
+          <h3 className="font-display text-2xl text-white mb-3">EVOLVE TRADE HUB</h3>
           <p className="text-sm leading-relaxed">
             An A.I trading company devoted to your financial success. Regulated,
             transparent, and built for long-term investors.
@@ -42,7 +42,7 @@ export function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 text-xs text-white/50 flex flex-col md:flex-row justify-between gap-2">
-          <p>© {new Date().getFullYear()} Evolve Digital Trade. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} EVOLVE TRADE HUB. All rights reserved.</p>
           <p>Risk warning: Trading involves risk. Past performance is not indicative of future results.</p>
         </div>
       </div>
