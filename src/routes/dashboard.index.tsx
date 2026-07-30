@@ -187,7 +187,7 @@ function Dashboard() {
         </span>
         <span className="flex items-center gap-1.5">
           <Clock className="h-3 w-3" />
-          {currentTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })} UTC
+          {currentTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: "UTC" })} UTC
         </span>
         <span className="flex items-center gap-1.5">
           <Globe2 className="h-3 w-3" /> Global Markets
