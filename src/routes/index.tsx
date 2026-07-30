@@ -80,7 +80,7 @@ function HomePage() {
             transition={{ duration: 0.6, delay: 0.7 }}
             className="mt-8 flex flex-wrap justify-center gap-4"
           >
-            <a href="https://app.e-directpro.com/register" className="rounded-md bg-gold px-8 py-3 font-semibold text-navy hover:brightness-110 shadow-[0_10px_30px_-10px_color-mix(in_oklab,var(--gold)_70%,transparent)] transition-all hover:-translate-y-0.5">Create an Account</a>
+            <Link to="/register" className="rounded-md bg-gold px-8 py-3 font-semibold text-navy hover:brightness-110 shadow-[0_10px_30px_-10px_color-mix(in_oklab,var(--gold)_70%,transparent)] transition-all hover:-translate-y-0.5">Create an Account</Link>
             <Link to="/company" className="rounded-md border border-white/40 backdrop-blur px-8 py-3 font-semibold text-white hover:bg-white/10 hover:border-gold transition-all">Learn More</Link>
           </motion.div>
         </div>
@@ -179,7 +179,7 @@ function HomePage() {
               to the global financial markets. That's why we've built the most powerful app for
               finance.
             </p>
-            <a href="https://app.e-directpro.com/register" className="inline-block mt-6 rounded-md bg-gold px-6 py-3 font-semibold text-navy hover:brightness-110 transition-all hover:-translate-y-0.5">Get Started</a>
+            <Link to="/register" className="inline-block mt-6 rounded-md bg-gold px-6 py-3 font-semibold text-navy hover:brightness-110 transition-all hover:-translate-y-0.5">Get Started</Link>
           </Reveal>
           <Reveal delay={0.15}>
             <div className="overflow-hidden rounded-lg shadow-xl">
@@ -235,7 +235,7 @@ function HomePage() {
               Complex, automated solutions using leading artificial intelligence trading technology —
               aimed at high profits within a short period across crypto, forex, and stock markets.
             </p>
-            <a href="https://app.e-directpro.com/register" className="inline-block mt-8 rounded-md bg-gold px-8 py-3 font-semibold text-navy hover:brightness-110 shadow-[0_10px_30px_-10px_color-mix(in_oklab,var(--gold)_70%,transparent)] transition-all hover:-translate-y-0.5">Open an Account</a>
+            <Link to="/register" className="inline-block mt-8 rounded-md bg-gold px-8 py-3 font-semibold text-navy hover:brightness-110 shadow-[0_10px_30px_-10px_color-mix(in_oklab,var(--gold)_70%,transparent)] transition-all hover:-translate-y-0.5">Open an Account</Link>
           </Reveal>
         </div>
       </section>
@@ -252,7 +252,7 @@ function HomePage() {
               earn — you share the returns.
             </p>
             <div className="mt-6 flex flex-wrap gap-4">
-              <a href="https://app.e-directpro.com/register" className="rounded-md bg-navy px-6 py-3 text-white font-semibold hover:bg-navy/90 transition-all hover:-translate-y-0.5">Open an Account</a>
+              <Link to="/register" className="rounded-md bg-navy px-6 py-3 text-white font-semibold hover:bg-navy/90 transition-all hover:-translate-y-0.5">Open an Account</Link>
               <Link to="/investment" className="rounded-md border border-navy px-6 py-3 font-semibold text-navy hover:bg-navy hover:text-white transition-all">View Plans</Link>
             </div>
           </Reveal>

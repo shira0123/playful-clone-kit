@@ -24,8 +24,8 @@ export function Footer() {
         <div>
           <h4 className="text-white font-semibold mb-3 text-sm uppercase tracking-wider">Account</h4>
           <ul className="space-y-2 text-sm">
-            <li><a href="https://app.e-directpro.com/register" className="hover:text-gold">Create Account</a></li>
-            <li><a href="https://app.e-directpro.com/login" className="hover:text-gold">Account Login</a></li>
+            <li><Link to="/register" className="hover:text-gold">Create Account</Link></li>
+            <li><Link to="/login" className="hover:text-gold">Account Login</Link></li>
             <li><Link to="/contact" className="hover:text-gold">Support</Link></li>
           </ul>
         </div>
