@@ -95,3 +95,14 @@ export const approveInvestment = createServerFn({ method: "POST" }).validator(z.
 export const rejectInvestment = createServerFn({ method: "POST" }).validator(z.object({ id: z.string().uuid() })).handler(async ({ data }) => { await adminInvestment.rejectInvestment(data.id); return { ok: true }; });
 export const cancelInvestment = createServerFn({ method: "POST" }).validator(z.object({ id: z.string().uuid() })).handler(async ({ data }) => { await adminInvestment.cancelInvestment(data.id); return { ok: true }; });
 export const getAdminInvestmentStats = createServerFn({ method: "GET" }).handler(() => adminInvestment.getAdminInvestmentStats());
+
+export const addAdminWallet = createServerFn({ method: "POST" }).validator(z.object({ network: z.string().min(1), address: z.string().min(1) })).handler(async ({ data }) => { await adminInvestment.addAdminWallet(data.network, data.address); return { ok: true }; });
+export const updateAdminWallet = createServerFn({ method: "POST" }).validator(z.object({ id: z.string().uuid(), network: z.string().min(1), address: z.string().min(1), isActive: z.boolean() })).handler(async ({ data }) => { await adminInvestment.updateAdminWallet(data.id, data.network, data.address, data.isActive); return { ok: true }; });
+export const deleteAdminWallet = createServerFn({ method: "POST" }).validator(z.object({ id: z.string().uuid() })).handler(async ({ data }) => { await adminInvestment.deleteAdminWallet(data.id); return { ok: true }; });
+
+export const resendVerificationEmail = createServerFn({ method: "POST" }).handler(async () => {
+  const user = await auth.requireUser();
+  if (user.emailVerified) throw new Error("Email is already verified");
+  await auth.resendVerification(user.id, user.email);
+  return { ok: true };
+});

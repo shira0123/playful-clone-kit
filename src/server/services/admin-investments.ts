@@ -1,6 +1,6 @@
 import { and, desc, eq, ilike, ne, or } from "drizzle-orm";
 import { db } from "../db";
-import { investmentPlans, investments, profiles, users } from "../db/schema";
+import { investmentPlans, investments, profiles, users, cryptoWallets } from "../db/schema";
 import { requireAdmin } from "./auth";
 
 export async function getAllInvestments(query = "", page = 0) {
@@ -88,4 +88,21 @@ export async function getAdminInvestmentStats() {
   }
 
   return { totalInvested, activeInvestments, pendingApprovals };
+}
+
+export async function addAdminWallet(network: string, address: string) {
+  await requireAdmin();
+  await db.insert(cryptoWallets).values({ network, address, isActive: true });
+}
+
+export async function updateAdminWallet(id: string, network: string, address: string, isActive: boolean) {
+  await requireAdmin();
+  await db.update(cryptoWallets)
+    .set({ network, address, isActive, updatedAt: new Date() })
+    .where(eq(cryptoWallets.id, id));
+}
+
+export async function deleteAdminWallet(id: string) {
+  await requireAdmin();
+  await db.delete(cryptoWallets).where(eq(cryptoWallets.id, id));
 }

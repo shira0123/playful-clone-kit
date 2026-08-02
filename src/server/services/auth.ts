@@ -41,7 +41,11 @@ export async function register(input: { email: string; password: string; firstNa
   const [user] = await db.insert(users).values({ email: input.email, passwordHash: await hashPassword(input.password) }).returning({ id: users.id, email: users.email });
   await db.insert(profiles).values({ userId: user.id, firstName: input.firstName, lastName: input.lastName });
   await db.insert(notifications).values({ userId: user.id, title: "Welcome to EVOLVE TRADE HUB", body: "Please verify your email to secure your account." });
-  await email.verification(user.email, await issueToken(emailVerificationTokens, user.id, 86_400_000));
+  try {
+    await email.verification(user.email, await issueToken(emailVerificationTokens, user.id, 86_400_000));
+  } catch (error) {
+    console.error("Failed to send verification email during registration:", error);
+  }
 }
 export async function login(input: { email: string; password: string }) {
   const user = await getUserByEmail(input.email);
@@ -51,6 +55,9 @@ export async function login(input: { email: string; password: string }) {
   return publicUser(user);
 }
 export async function logout() { const token = getCookie(env.SESSION_COOKIE_NAME); if (token) await db.delete(sessions).where(eq(sessions.tokenHash, await hashToken(token))); deleteCookie(env.SESSION_COOKIE_NAME, { path: "/" }); }
+export async function resendVerification(userId: string, emailAddress: string) {
+  await email.verification(emailAddress, await issueToken(emailVerificationTokens, userId, 86_400_000));
+}
 export async function verifyEmail(token: string) {
   const [record] = await db.select().from(emailVerificationTokens).where(and(eq(emailVerificationTokens.tokenHash, await hashToken(token)), gt(emailVerificationTokens.expiresAt, new Date()), isNull(emailVerificationTokens.usedAt))).limit(1); assert(record, 400, "This verification link is invalid or has expired.");
   await db.transaction(async (tx) => { await tx.update(emailVerificationTokens).set({ usedAt: new Date(), updatedAt: new Date() }).where(eq(emailVerificationTokens.id, record.id)); await tx.update(users).set({ emailVerifiedAt: new Date(), updatedAt: new Date() }).where(eq(users.id, record.userId)); });

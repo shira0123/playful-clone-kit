@@ -1,14 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { type FormEvent, useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { getCurrentUser, saveProfile } from "@/server-fns";
+import { getCurrentUser, saveProfile, resendVerificationEmail } from "@/server-fns";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { Lock, User } from "lucide-react";
+import { Lock, User, ShieldCheck, AlertCircle, Phone, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/profile")({
   component: Profile,
@@ -20,11 +20,24 @@ function Profile() {
     firstName: string;
     lastName: string;
     email: string;
+    emailVerified: boolean;
     phone?: string;
   }>();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [resending, setResending] = useState(false);
 
+  async function handleResendEmail() {
+    setResending(true);
+    try {
+      await resendVerificationEmail();
+      toast.success("Verification email sent! Check your inbox.");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to send verification email.");
+    } finally {
+      setResending(false);
+    }
+  }
   useEffect(() => {
     void getCurrentUser().then((value) => {
       if (!value) return navigate({ to: "/login" });
@@ -158,6 +171,60 @@ function Profile() {
           </Button>
         </div>
       </form>
+
+      {/* Account Verification Section */}
+      <div className="mt-6 max-w-xl rounded-lg bg-white p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-navy mb-4">Account Verification</h3>
+        <Separator className="mb-4" />
+        
+        <div className="space-y-6">
+          {/* Email Verification */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border bg-slate-50/50">
+            <div className="flex items-start gap-3">
+              <div className={`mt-0.5 p-2 rounded-full ${user?.emailVerified ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"}`}>
+                {user?.emailVerified ? <ShieldCheck className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-navy">Email Address</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{user?.emailVerified ? "Verified and secure." : "Not verified yet. Please check your inbox."}</p>
+              </div>
+            </div>
+            {!user?.emailVerified && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleResendEmail} 
+                disabled={resending}
+                className="shrink-0"
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                {resending ? "Sending..." : "Resend Email"}
+              </Button>
+            )}
+          </div>
+
+          {/* Mobile Verification Placeholder */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border bg-slate-50/50">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 p-2 rounded-full bg-slate-100 text-slate-400">
+                <Phone className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-navy">Mobile Number</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Secure your account with SMS verification.</p>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              disabled
+              className="shrink-0"
+            >
+              Verify Mobile
+            </Button>
+          </div>
+        </div>
+      </div>
     </DashboardLayout>
   );
 }

@@ -12,6 +12,7 @@ import {
   ScrollText,
   Users as UsersIcon,
   Shield,
+  Wallet,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -51,6 +52,7 @@ export function DashboardLayout({
   const adminNavItems = [
     { to: "/admin", label: "Overview", icon: Shield },
     { to: "/admin/investments", label: "Investments", icon: Activity },
+    { to: "/admin/wallets", label: "Crypto Wallets", icon: Wallet },
     { to: "/admin/users", label: "Users", icon: UsersIcon },
     { to: "/admin/audit", label: "Audit Logs", icon: ScrollText },
   ];

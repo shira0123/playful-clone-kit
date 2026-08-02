@@ -26,6 +26,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
 import { Route as AdminInvestmentsRouteImport } from './routes/admin.investments'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminWalletsRouteImport } from './routes/admin.wallets'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardActivityRouteImport } from './routes/dashboard.activity'
 import { Route as DashboardInvestmentsRouteImport } from './routes/dashboard.investments'
@@ -118,6 +119,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminWalletsRoute = AdminWalletsRouteImport.update({
+  id: '/wallets',
+  path: '/wallets',
+  getParentRoute: () => AdminRoute,
+} as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/investments': typeof AdminInvestmentsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/wallets': typeof AdminWalletsRoute
   '/dashboard/activity': typeof DashboardActivityRoute
   '/dashboard/investments': typeof DashboardInvestmentsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
@@ -189,6 +196,7 @@ export interface FileRoutesByTo {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/investments': typeof AdminInvestmentsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/wallets': typeof AdminWalletsRoute
   '/dashboard/activity': typeof DashboardActivityRoute
   '/dashboard/investments': typeof DashboardInvestmentsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
@@ -215,6 +223,7 @@ export interface FileRoutesById {
   '/admin/audit': typeof AdminAuditRoute
   '/admin/investments': typeof AdminInvestmentsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/wallets': typeof AdminWalletsRoute
   '/dashboard/activity': typeof DashboardActivityRoute
   '/dashboard/investments': typeof DashboardInvestmentsRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
@@ -242,6 +251,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/investments'
     | '/admin/users'
+    | '/admin/wallets'
     | '/dashboard/activity'
     | '/dashboard/investments'
     | '/dashboard/notifications'
@@ -265,6 +275,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/investments'
     | '/admin/users'
+    | '/admin/wallets'
     | '/dashboard/activity'
     | '/dashboard/investments'
     | '/dashboard/notifications'
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/admin/audit'
     | '/admin/investments'
     | '/admin/users'
+    | '/admin/wallets'
     | '/dashboard/activity'
     | '/dashboard/investments'
     | '/dashboard/notifications'
@@ -436,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/wallets': {
+      id: '/admin/wallets'
+      path: '/wallets'
+      fullPath: '/admin/wallets'
+      preLoaderRoute: typeof AdminWalletsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/'
@@ -485,6 +504,7 @@ interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
   AdminInvestmentsRoute: typeof AdminInvestmentsRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  AdminWalletsRoute: typeof AdminWalletsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -492,6 +512,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
   AdminInvestmentsRoute: AdminInvestmentsRoute,
   AdminUsersRoute: AdminUsersRoute,
+  AdminWalletsRoute: AdminWalletsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
