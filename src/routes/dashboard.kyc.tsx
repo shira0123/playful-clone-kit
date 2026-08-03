@@ -51,6 +51,21 @@ function DashboardKyc() {
       toast.error("Please fill in all required fields.");
       return;
     }
+    
+    // Check if age is at least 18
+    const dob = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    
+    if (age < 18) {
+      toast.error("You must be at least 18 years old to verify your identity.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await submitKyc({
@@ -157,11 +172,12 @@ function DashboardKyc() {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                  <Label htmlFor="dateOfBirth">Date of Birth (Must be at least 18 years old)</Label>
                   <Input
                     id="dateOfBirth"
                     type="date"
                     required
+                    max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
                     value={dateOfBirth}
                     onChange={(e) => setDateOfBirth(e.target.value)}
                   />
