@@ -1,14 +1,14 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { type FormEvent, useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { getCurrentUser, saveProfile, resendVerificationEmail } from "@/server-fns";
+import { getCurrentUser, saveProfile, resendVerificationEmail, getUserKyc } from "@/server-fns";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { Lock, User, ShieldCheck, AlertCircle, Phone, Mail } from "lucide-react";
+import { Lock, User, ShieldCheck, AlertCircle, Phone, Mail, FileCheck, Clock, ShieldAlert } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/profile")({
   component: Profile,
@@ -23,6 +23,7 @@ function Profile() {
     emailVerified: boolean;
     phone?: string;
   }>();
+  const [kycStatus, setKycStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [resending, setResending] = useState(false);
@@ -38,12 +39,15 @@ function Profile() {
       setResending(false);
     }
   }
+  
   useEffect(() => {
-    void getCurrentUser().then((value) => {
-      if (!value) return navigate({ to: "/login" });
-      setUser(value as any);
-      setLoading(false);
-    });
+    Promise.all([getCurrentUser(), getUserKyc()])
+      .then(([userData, kycData]) => {
+        if (!userData) return navigate({ to: "/login" });
+        setUser(userData as any);
+        setKycStatus(kycData?.status || null);
+        setLoading(false);
+      });
   }, [navigate]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -222,6 +226,44 @@ function Profile() {
             >
               Verify Mobile
             </Button>
+          </div>
+
+          {/* KYC Verification */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border bg-slate-50/50">
+            <div className="flex items-start gap-3">
+              <div className={`mt-0.5 p-2 rounded-full ${
+                kycStatus === "approved" ? "bg-emerald-100 text-emerald-600" : 
+                kycStatus === "pending" ? "bg-amber-100 text-amber-600" :
+                kycStatus === "rejected" ? "bg-red-100 text-red-600" :
+                "bg-slate-100 text-slate-400"
+              }`}>
+                {kycStatus === "approved" ? <ShieldCheck className="h-4 w-4" /> : 
+                 kycStatus === "pending" ? <Clock className="h-4 w-4" /> :
+                 kycStatus === "rejected" ? <ShieldAlert className="h-4 w-4" /> :
+                 <FileCheck className="h-4 w-4" />}
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-navy">Identity Verification (KYC)</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {kycStatus === "approved" ? "Identity verified." : 
+                   kycStatus === "pending" ? "Verification in progress." :
+                   kycStatus === "rejected" ? "Verification failed. Please retry." :
+                   "Not verified yet."}
+                </p>
+              </div>
+            </div>
+            <Link to="/dashboard/kyc" className="shrink-0">
+              <Button 
+                variant={kycStatus === "approved" ? "outline" : "default"} 
+                size="sm"
+                className={kycStatus === "approved" ? "" : "bg-gold text-navy hover:bg-gold/90"}
+              >
+                {kycStatus === "approved" ? "View Details" : 
+                 kycStatus === "pending" ? "Check Status" :
+                 kycStatus === "rejected" ? "Retry Application" :
+                 "Submit Application"}
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

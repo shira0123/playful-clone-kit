@@ -9,6 +9,9 @@ const timestamps = {
 export const userRole = pgEnum("user_role", ["user", "admin"]);
 export const userStatus = pgEnum("user_status", ["active", "suspended"]);
 export const investmentStatus = pgEnum("investment_status", ["pending", "active", "completed", "rejected"]);
+export const kycStatus = pgEnum("kyc_status", ["pending", "approved", "rejected"]);
+export const kycDocumentType = pgEnum("kyc_document_type", ["drivers_licence", "passport", "work_id", "national_id"]);
+
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -115,11 +118,26 @@ export const investments = pgTable("investments", {
   index("investments_status_idx").on(table.status),
 ]);
 
+export const kycSubmissions = pgTable("kyc_submissions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+  status: kycStatus("status").notNull().default("pending"),
+  dateOfBirth: text("date_of_birth").notNull(),
+  residenceAddress: text("residence_address").notNull(),
+  documentType: kycDocumentType("document_type").notNull(),
+  documentUrl: text("document_url"),
+  adminNotes: text("admin_notes"),
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  reviewedBy: uuid("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+  ...timestamps,
+}, (table) => [index("kyc_user_id_idx").on(table.userId)]);
+
 export const usersRelations = relations(users, ({ one, many }) => ({
-  profile: one(profiles), 
-  sessions: many(sessions), 
+  profile: one(profiles),
+  sessions: many(sessions),
   notifications: many(notifications),
   investments: many(investments),
+  kycSubmission: one(kycSubmissions),
 }));
 export const profilesRelations = relations(profiles, ({ one }) => ({ user: one(users, { fields: [profiles.userId], references: [users.id] }) }));
 
@@ -131,3 +149,8 @@ export const investmentsRelations = relations(investments, ({ one }) => ({
   user: one(users, { fields: [investments.userId], references: [users.id] }),
   plan: one(investmentPlans, { fields: [investments.planId], references: [investmentPlans.id] }),
 }));
+
+export const kycRelations = relations(kycSubmissions, ({ one }) => ({
+  user: one(users, { fields: [kycSubmissions.userId], references: [users.id] }),
+}));
+

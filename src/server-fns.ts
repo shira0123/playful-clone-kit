@@ -106,3 +106,34 @@ export const resendVerificationEmail = createServerFn({ method: "POST" }).handle
   await auth.resendVerification(user.id, user.email);
   return { ok: true };
 });
+
+import * as kycService from "./server/services/kyc";
+
+const kycDocumentTypes = ["drivers_licence", "passport", "work_id", "national_id"] as const;
+
+export const submitKyc = createServerFn({ method: "POST" })
+  .validator(z.object({
+    dateOfBirth: z.string().min(1),
+    residenceAddress: z.string().min(1).max(500),
+    documentType: z.enum(kycDocumentTypes),
+    documentUrl: z.string().url().optional().or(z.literal("")),
+  }))
+  .handler(async ({ data }) => {
+    await kycService.submitKyc({
+      ...data,
+      documentUrl: data.documentUrl || undefined,
+    });
+    return { ok: true };
+  });
+
+export const getUserKyc = createServerFn({ method: "GET" }).handler(() => kycService.getUserKyc());
+
+export const getAdminKycList = createServerFn({ method: "GET" }).handler(() => kycService.getAdminKycList());
+
+export const approveKyc = createServerFn({ method: "POST" })
+  .validator(z.object({ id: z.string().uuid(), notes: z.string().max(500).optional() }))
+  .handler(async ({ data }) => { await kycService.approveKyc(data.id, data.notes); return { ok: true }; });
+
+export const rejectKyc = createServerFn({ method: "POST" })
+  .validator(z.object({ id: z.string().uuid(), notes: z.string().min(1).max(500) }))
+  .handler(async ({ data }) => { await kycService.rejectKyc(data.id, data.notes); return { ok: true }; });

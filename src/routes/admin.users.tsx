@@ -161,7 +161,7 @@ function Users() {
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="bg-white border border-slate-200 shadow-xl z-50">
                           <DropdownMenuItem onClick={() => void act(() => changeAdminUserStatus({ data: { userId: user.id, status: user.status === "active" ? "suspended" : "active" } }), `User ${user.status === "active" ? "suspended" : "reactivated"}.`)}>                            {user.status === "active" ? (
                               <><UserCog className="mr-2 h-4 w-4" /> Suspend</>
                             ) : (

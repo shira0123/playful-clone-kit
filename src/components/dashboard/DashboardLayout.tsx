@@ -13,6 +13,7 @@ import {
   Users as UsersIcon,
   Shield,
   Wallet,
+  FileCheck,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ export function DashboardLayout({
     { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
     { to: "/dashboard/investments", label: "Investments", icon: Activity },
     { to: "/dashboard/profile", label: "Profile", icon: User },
+    { to: "/dashboard/kyc", label: "KYC Verification", icon: FileCheck },
     { to: "/dashboard/settings", label: "Settings", icon: Settings },
     { to: "/dashboard/notifications", label: "Notifications", icon: Bell },
   ];
@@ -53,6 +55,7 @@ export function DashboardLayout({
     { to: "/admin", label: "Overview", icon: Shield },
     { to: "/admin/investments", label: "Investments", icon: Activity },
     { to: "/admin/wallets", label: "Crypto Wallets", icon: Wallet },
+    { to: "/admin/kyc", label: "KYC Reviews", icon: FileCheck },
     { to: "/admin/users", label: "Users", icon: UsersIcon },
     { to: "/admin/audit", label: "Audit Logs", icon: ScrollText },
   ];

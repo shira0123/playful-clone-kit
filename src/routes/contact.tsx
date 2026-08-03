@@ -28,9 +28,23 @@ function ContactPage() {
             <h2 className="font-display text-3xl text-navy font-bold">Get in touch</h2>
             <p className="mt-3 text-muted-foreground">Our team typically replies within one business day.</p>
             <div className="mt-8 space-y-4 text-sm">
-              <div className="flex items-start gap-3"><Mail className="text-gold mt-0.5 shrink-0" size={18} /><span className="min-w-0 break-words">support@evolvetradehub.com</span></div>
-              <div className="flex items-start gap-3"><Phone className="text-gold mt-0.5 shrink-0" size={18} /><span>+44 20 8080 0000</span></div>
-              <div className="flex items-start gap-3"><MapPin className="text-gold mt-0.5 shrink-0" size={18} /><span>Registered office · United Kingdom</span></div>
+              <div className="flex items-start gap-3">
+                <Mail className="text-gold mt-0.5 shrink-0" size={18} />
+                <a
+                  href="mailto:notifications@evolvetradehub.com"
+                  className="min-w-0 break-words hover:text-gold transition-colors"
+                >
+                  notifications@evolvetradehub.com
+                </a>
+              </div>
+              <div className="flex items-start gap-3">
+                <Phone className="text-gold mt-0.5 shrink-0" size={18} />
+                <span>+44 20 8080 0000</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <MapPin className="text-gold mt-0.5 shrink-0" size={18} />
+                <span>Registered office · United Kingdom</span>
+              </div>
             </div>
           </Reveal>
           <Reveal delay={0.15}>
@@ -54,7 +68,9 @@ function ContactPage() {
                     <label className="text-sm font-medium">Message</label>
                     <textarea required rows={5} className="mt-1 w-full rounded-md border px-3 py-2 text-sm focus:border-gold focus:outline-none transition-colors" />
                   </div>
-                  <button className="w-full rounded-md bg-navy text-white py-3 font-semibold hover:bg-navy/90 transition-all hover:-translate-y-0.5">Send Message</button>
+                  <button className="w-full rounded-md bg-navy text-white py-3 font-semibold hover:bg-navy/90 transition-all hover:-translate-y-0.5 cursor-pointer">
+                    Send Message
+                  </button>
                 </>
               )}
             </form>

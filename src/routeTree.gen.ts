@@ -25,11 +25,13 @@ import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAuditRouteImport } from './routes/admin.audit'
 import { Route as AdminInvestmentsRouteImport } from './routes/admin.investments'
+import { Route as AdminKycRouteImport } from './routes/admin.kyc'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminWalletsRouteImport } from './routes/admin.wallets'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardActivityRouteImport } from './routes/dashboard.activity'
 import { Route as DashboardInvestmentsRouteImport } from './routes/dashboard.investments'
+import { Route as DashboardKycRouteImport } from './routes/dashboard.kyc'
 import { Route as DashboardNotificationsRouteImport } from './routes/dashboard.notifications'
 import { Route as DashboardProfileRouteImport } from './routes/dashboard.profile'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
@@ -114,6 +116,11 @@ const AdminInvestmentsRoute = AdminInvestmentsRouteImport.update({
   path: '/investments',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminKycRoute = AdminKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -137,6 +144,11 @@ const DashboardActivityRoute = DashboardActivityRouteImport.update({
 const DashboardInvestmentsRoute = DashboardInvestmentsRouteImport.update({
   id: '/investments',
   path: '/investments',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardKycRoute = DashboardKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
@@ -171,10 +183,12 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof VerifyEmailRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/investments': typeof AdminInvestmentsRoute
+  '/admin/kyc': typeof AdminKycRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/wallets': typeof AdminWalletsRoute
   '/dashboard/activity': typeof DashboardActivityRoute
   '/dashboard/investments': typeof DashboardInvestmentsRoute
+  '/dashboard/kyc': typeof DashboardKycRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -195,10 +209,12 @@ export interface FileRoutesByTo {
   '/verify-email': typeof VerifyEmailRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/investments': typeof AdminInvestmentsRoute
+  '/admin/kyc': typeof AdminKycRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/wallets': typeof AdminWalletsRoute
   '/dashboard/activity': typeof DashboardActivityRoute
   '/dashboard/investments': typeof DashboardInvestmentsRoute
+  '/dashboard/kyc': typeof DashboardKycRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -222,10 +238,12 @@ export interface FileRoutesById {
   '/verify-email': typeof VerifyEmailRoute
   '/admin/audit': typeof AdminAuditRoute
   '/admin/investments': typeof AdminInvestmentsRoute
+  '/admin/kyc': typeof AdminKycRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/wallets': typeof AdminWalletsRoute
   '/dashboard/activity': typeof DashboardActivityRoute
   '/dashboard/investments': typeof DashboardInvestmentsRoute
+  '/dashboard/kyc': typeof DashboardKycRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -250,10 +268,12 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/admin/audit'
     | '/admin/investments'
+    | '/admin/kyc'
     | '/admin/users'
     | '/admin/wallets'
     | '/dashboard/activity'
     | '/dashboard/investments'
+    | '/dashboard/kyc'
     | '/dashboard/notifications'
     | '/dashboard/profile'
     | '/dashboard/settings'
@@ -274,10 +294,12 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/admin/audit'
     | '/admin/investments'
+    | '/admin/kyc'
     | '/admin/users'
     | '/admin/wallets'
     | '/dashboard/activity'
     | '/dashboard/investments'
+    | '/dashboard/kyc'
     | '/dashboard/notifications'
     | '/dashboard/profile'
     | '/dashboard/settings'
@@ -300,10 +322,12 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/admin/audit'
     | '/admin/investments'
+    | '/admin/kyc'
     | '/admin/users'
     | '/admin/wallets'
     | '/dashboard/activity'
     | '/dashboard/investments'
+    | '/dashboard/kyc'
     | '/dashboard/notifications'
     | '/dashboard/profile'
     | '/dashboard/settings'
@@ -441,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminInvestmentsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/kyc': {
+      id: '/admin/kyc'
+      path: '/kyc'
+      fullPath: '/admin/kyc'
+      preLoaderRoute: typeof AdminKycRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -476,6 +507,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardInvestmentsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/kyc': {
+      id: '/dashboard/kyc'
+      path: '/kyc'
+      fullPath: '/dashboard/kyc'
+      preLoaderRoute: typeof DashboardKycRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/notifications': {
       id: '/dashboard/notifications'
       path: '/notifications'
@@ -503,6 +541,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminAuditRoute: typeof AdminAuditRoute
   AdminInvestmentsRoute: typeof AdminInvestmentsRoute
+  AdminKycRoute: typeof AdminKycRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminWalletsRoute: typeof AdminWalletsRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -511,6 +550,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditRoute: AdminAuditRoute,
   AdminInvestmentsRoute: AdminInvestmentsRoute,
+  AdminKycRoute: AdminKycRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminWalletsRoute: AdminWalletsRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -521,6 +561,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface DashboardRouteChildren {
   DashboardActivityRoute: typeof DashboardActivityRoute
   DashboardInvestmentsRoute: typeof DashboardInvestmentsRoute
+  DashboardKycRoute: typeof DashboardKycRoute
   DashboardNotificationsRoute: typeof DashboardNotificationsRoute
   DashboardProfileRoute: typeof DashboardProfileRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
@@ -530,6 +571,7 @@ interface DashboardRouteChildren {
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardActivityRoute: DashboardActivityRoute,
   DashboardInvestmentsRoute: DashboardInvestmentsRoute,
+  DashboardKycRoute: DashboardKycRoute,
   DashboardNotificationsRoute: DashboardNotificationsRoute,
   DashboardProfileRoute: DashboardProfileRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,

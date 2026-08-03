@@ -2,11 +2,16 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { AuthFrame, FormMessage } from "@/components/auth/AuthFrame";
 import { loginUser } from "@/server-fns";
+import { Eye, EyeOff } from "lucide-react";
+
 export const Route = createFileRoute("/login")({ component: Login });
+
 function Login() {
   const navigate = useNavigate();
   const [error, setError] = useState<string>();
   const [pending, setPending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(undefined);
@@ -23,6 +28,7 @@ function Login() {
       setPending(false);
     }
   }
+
   return (
     <AuthFrame title="Welcome back" subtitle="Sign in to your EVOLVE TRADE HUB account">
       <form className="mt-7 space-y-4" onSubmit={submit}>
@@ -38,13 +44,24 @@ function Login() {
         </label>
         <label className="block text-sm font-medium">
           Password
-          <input
-            required
-            type="password"
-            name="password"
-            autoComplete="current-password"
-            className="mt-1 w-full rounded-md border px-3 py-2"
-          />
+          <div className="relative mt-1">
+            <input
+              required
+              type={showPassword ? "text" : "password"}
+              name="password"
+              autoComplete="current-password"
+              className="w-full rounded-md border px-3 py-2 pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+              tabIndex={-1}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
         </label>
         <button
           disabled={pending}
@@ -59,10 +76,10 @@ function Login() {
           Forgot password?
         </Link>
       </p>
-      <p className="mt-2 text-center text-sm text-muted-foreground">
+      <p className="mt-2 text-center text-sm">
         New here?{" "}
         <Link to="/register" className="font-semibold text-navy underline">
-          Create an account
+          Create account
         </Link>
       </p>
     </AuthFrame>
