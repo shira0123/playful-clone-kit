@@ -167,8 +167,8 @@ function Users() {
                       <Badge variant={user.status === "active" ? "default" : "destructive"} className={user.status === "active" ? "bg-green-600 hover:bg-green-700" : ""}>
                         {user.status}
                       </Badge>
-                      {user.role === "super_admin" && <Badge className="ml-2 bg-purple-600 hover:bg-purple-700">Super Admin</Badge>}
-                      {user.role === "admin" && <Badge className="ml-2 bg-blue-600 hover:bg-blue-700">Admin</Badge>}
+                      {currentUserRole === "super_admin" && user.role === "super_admin" && <Badge className="ml-2 bg-purple-600 hover:bg-purple-700">Super Admin</Badge>}
+                      {(user.role === "admin" || (user.role === "super_admin" && currentUserRole !== "super_admin")) && <Badge className="ml-2 bg-blue-600 hover:bg-blue-700">Admin</Badge>}
                     </TableCell>
                     <TableCell>
                       {user.emailVerifiedAt ? (

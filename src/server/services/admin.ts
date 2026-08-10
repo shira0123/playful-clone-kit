@@ -26,8 +26,8 @@ export async function deleteUser(targetUserId: string) {
   const admin = await requireAdmin();
   const [targetUser] = await db.select({ role: users.role }).from(users).where(eq(users.id, targetUserId));
   if (targetUser?.role === "admin" || targetUser?.role === "super_admin") {
-     if (admin.role !== "super_admin") throw new Error("Only the Super Admin can delete other administrators.");
-     if (targetUser.role === "super_admin") throw new Error("Super Admin cannot be deleted. Change role first.");
+     if (admin.role !== "super_admin") throw new Error("You do not have permission to delete other administrators.");
+     if (targetUser.role === "super_admin") throw new Error("This administrator cannot be deleted.");
   }
   await db.delete(users).where(and(eq(users.id, targetUserId), sql`${users.id} <> ${admin.id}`)); 
   await audit(admin.id, "user.deleted", targetUserId); 
