@@ -8,7 +8,9 @@ import {
   adminVerifyEmail, 
   changeAdminUserStatus, 
   getAdminUsers,
-  adminUpdateUserFunds
+  adminUpdateUserFunds,
+  adminChangeUserRole,
+  getCurrentUser
 } from "@/server-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -76,6 +78,13 @@ function Users() {
   const [fundAmount, setFundAmount] = useState("");
   const [fundAction, setFundAction] = useState<"add" | "deduct">("add");
   const [isSubmittingFund, setIsSubmittingFund] = useState(false);
+  const [currentUserRole, setCurrentUserRole] = useState<string>("admin");
+
+  useEffect(() => {
+    getCurrentUser().then(u => {
+      if (u) setCurrentUserRole(u.role);
+    });
+  }, []);
 
   const load = (q: string, p: number) => {
     setIsLoading(true);
@@ -158,6 +167,8 @@ function Users() {
                       <Badge variant={user.status === "active" ? "default" : "destructive"} className={user.status === "active" ? "bg-green-600 hover:bg-green-700" : ""}>
                         {user.status}
                       </Badge>
+                      {user.role === "super_admin" && <Badge className="ml-2 bg-purple-600 hover:bg-purple-700">Super Admin</Badge>}
+                      {user.role === "admin" && <Badge className="ml-2 bg-blue-600 hover:bg-blue-700">Admin</Badge>}
                     </TableCell>
                     <TableCell>
                       {user.emailVerifiedAt ? (
@@ -206,6 +217,12 @@ function Users() {
                           <DropdownMenuItem onClick={() => setFundManageUser(user)}>
                             <CircleDollarSign className="mr-2 h-4 w-4" /> Manage Funds
                           </DropdownMenuItem>
+
+                          {currentUserRole === "super_admin" && user.role !== "super_admin" && (
+                            <DropdownMenuItem onClick={() => void act(() => adminChangeUserRole({ data: { userId: user.id, role: user.role === "admin" ? "user" : "admin" } }), `User is now ${user.role === "admin" ? "a regular user" : "an admin"}.`)}>
+                              <ShieldCheck className="mr-2 h-4 w-4" /> {user.role === "admin" ? "Demote to User" : "Promote to Admin"}
+                            </DropdownMenuItem>
+                          )}
 
                           {user.role !== "super_admin" && (
                             <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => setUserToDelete(user)}>

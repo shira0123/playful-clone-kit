@@ -75,6 +75,7 @@ const userId = z.object({ userId: z.string().uuid() });
 export const getAdminOverview = createServerFn({ method: "GET" }).handler(() => admin.adminOverview());
 export const getAdminUsers = createServerFn({ method: "GET" }).validator(z.object({ query: z.string().max(100).optional(), page: z.number().int().min(0).max(1000).optional() })).handler(({ data }) => admin.listUsers(data.query, data.page));
 export const changeAdminUserStatus = createServerFn({ method: "POST" }).validator(userId.extend({ status: z.enum(["active", "suspended"]) })).handler(async ({ data }) => { await admin.setUserStatus(data.userId, data.status); return { ok: true }; });
+export const adminChangeUserRole = createServerFn({ method: "POST" }).validator(userId.extend({ role: z.enum(["admin", "user"]) })).handler(async ({ data }) => { await admin.setUserRole(data.userId, data.role); return { ok: true }; });
 export const adminVerifyEmail = createServerFn({ method: "POST" }).validator(userId).handler(async ({ data }) => { await admin.verifyUserEmail(data.userId); return { ok: true }; });
 export const adminDeleteUser = createServerFn({ method: "POST" }).validator(userId).handler(async ({ data }) => { await admin.deleteUser(data.userId); return { ok: true }; });
 export const adminResetPassword = createServerFn({ method: "POST" }).validator(userId).handler(async ({ data }) => { await admin.sendAdminPasswordReset(data.userId); return { ok: true }; });

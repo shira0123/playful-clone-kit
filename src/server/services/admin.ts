@@ -1,7 +1,7 @@
 import { and, desc, eq, ilike, ne, or, sql } from "drizzle-orm";
 import { db } from "../db";
 import { auditLogs, profiles, sessions, users } from "../db/schema";
-import { createSession, requireAdmin, requestPasswordReset } from "./auth";
+import { createSession, requireAdmin, requestPasswordReset, requireSuperAdmin } from "./auth";
 
 async function audit(actorId: string, action: string, targetUserId?: string) { await db.insert(auditLogs).values({ actorId, targetUserId, action }); }
 export async function adminOverview() {
@@ -31,6 +31,17 @@ export async function deleteUser(targetUserId: string) {
   }
   await db.delete(users).where(and(eq(users.id, targetUserId), sql`${users.id} <> ${admin.id}`)); 
   await audit(admin.id, "user.deleted", targetUserId); 
+}
+
+export async function setUserRole(targetUserId: string, role: "admin" | "user") {
+  const admin = await requireSuperAdmin();
+  const [target] = await db.select({ role: users.role }).from(users).where(eq(users.id, targetUserId));
+  if (!target) throw new Error("User not found.");
+  if (target.role === "super_admin") throw new Error("Super Admin role cannot be modified.");
+  if (targetUserId === admin.id) throw new Error("Cannot change your own role.");
+
+  await db.update(users).set({ role, updatedAt: new Date() }).where(eq(users.id, targetUserId));
+  await audit(admin.id, `user.role_changed_${role}`, targetUserId);
 }
 
 export async function updateUserFunds(targetUserId: string, field: "balance" | "profits" | "bonus" | "referralCommission", amount: number, action: "add" | "deduct") {
