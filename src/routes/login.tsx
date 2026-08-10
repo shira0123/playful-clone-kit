@@ -21,7 +21,7 @@ function Login() {
       const user = await loginUser({
         data: { email: String(form.get("email")), password: String(form.get("password")) },
       });
-      await navigate({ to: user.role === "admin" ? "/admin" : "/dashboard" });
+      await navigate({ to: (user.role === "admin" || user.role === "super_admin") ? "/admin" : "/dashboard" });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to sign in.");
     } finally {

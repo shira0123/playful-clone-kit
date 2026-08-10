@@ -11,6 +11,8 @@
     "lint": "eslint .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx src/server/db/seed.ts",
+    "db:flush": "tsx src/server/scripts/flush-db.ts",
     "format": "prettier --write ."
   },
   "dependencies": {

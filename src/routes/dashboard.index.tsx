@@ -148,7 +148,7 @@ function Dashboard() {
   useEffect(() => {
     void getCurrentUser().then((u) => {
       if (!u) return navigate({ to: "/login" });
-      if (u.role === "admin") return navigate({ to: "/admin" });
+      if (u.role === "admin" || u.role === "super_admin") return navigate({ to: "/admin" });
       setUser(u as SafeUser);
       
       Promise.all([getNotifications(), getPortfolioStats()]).then(([notes, portfolioStats]) => {
