@@ -66,7 +66,7 @@ function AdminKyc() {
   };
 
   return (
-    <DashboardLayout title="KYC Management">
+    <DashboardLayout admin title="KYC Management">
       <div className="rounded-md border bg-white shadow-sm">
         <Table>
           <TableHeader>
