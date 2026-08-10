@@ -5,6 +5,7 @@ import { getInvestmentPlans, getUserInvestments, getCryptoWallets, submitInvestm
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Check, Copy, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -22,7 +23,10 @@ export const Route = createFileRoute("/dashboard/investments")({ component: Inve
 type Plan = {
   id: string;
   name: string;
-  priceAmount: number;
+  minAmount: number;
+  maxAmount: number;
+  roiPercentage: number;
+  durationDays: number;
   roiDisplay: string;
   durationDisplay: string;
   features: string[];
@@ -56,6 +60,7 @@ function Investments() {
   
   // Payment Modal State
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [depositAmount, setDepositAmount] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedWallet, setCopiedWallet] = useState<string | null>(null);
 
@@ -88,12 +93,18 @@ function Investments() {
   };
 
   const handlePaymentDone = async () => {
-    if (!selectedPlan) return;
+    if (!selectedPlan || !depositAmount || isNaN(Number(depositAmount))) return;
+    const amount = Number(depositAmount);
+    if (amount < selectedPlan.minAmount || amount > selectedPlan.maxAmount) {
+      toast.error(`Amount must be between $${selectedPlan.minAmount.toLocaleString()} and $${selectedPlan.maxAmount.toLocaleString()}`);
+      return;
+    }
     setIsSubmitting(true);
     try {
-      await submitInvestment({ data: { planId: selectedPlan.id, amount: selectedPlan.priceAmount } });
+      await submitInvestment({ data: { planId: selectedPlan.id, amount } });
       toast.success("Investment submitted! Pending admin verification.");
       setSelectedPlan(null);
+      setDepositAmount("");
       await loadData();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to submit investment");
@@ -122,7 +133,7 @@ function Investments() {
                   </span>
                 )}
                 <h3 className={`font-display text-xl font-bold ${p.isPopular ? "text-white" : "text-navy"}`}>{p.name}</h3>
-                <p className={`mt-3 font-display text-3xl font-bold ${p.isPopular ? "text-gold" : "text-navy"}`}>${p.priceAmount.toLocaleString()}</p>
+                <p className={`mt-3 font-display text-3xl font-bold ${p.isPopular ? "text-gold" : "text-navy"}`}>${p.minAmount.toLocaleString()}</p>
                 <p className={`mt-1 text-xs ${p.isPopular ? "text-white/70" : "text-muted-foreground"}`}>{p.roiDisplay} · {p.durationDisplay}</p>
                 <ul className="mt-6 space-y-3 text-sm flex-1">
                   {p.features.map((f: string) => (
@@ -199,13 +210,28 @@ function Investments() {
           <DialogHeader>
             <DialogTitle>Complete Your Investment</DialogTitle>
             <DialogDescription>
-              You are investing <strong>${selectedPlan?.priceAmount.toLocaleString()}</strong> in the <strong>{selectedPlan?.name}</strong> plan.
+              You are investing in the <strong>{selectedPlan?.name}</strong> plan.
             </DialogDescription>
           </DialogHeader>
           
           <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Enter Deposit Amount ($)</label>
+              <Input 
+                type="number"
+                min={selectedPlan?.minAmount}
+                max={selectedPlan?.maxAmount}
+                placeholder={`Min: $${selectedPlan?.minAmount.toLocaleString()} - Max: $${selectedPlan?.maxAmount.toLocaleString()}`}
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+              />
+              {depositAmount && Number(depositAmount) >= (selectedPlan?.minAmount || 0) && (
+                <p className="text-xs text-green-600">Valid amount. Estimated daily profit: ${(Number(depositAmount) * ((selectedPlan?.roiPercentage || 0) / 100)).toFixed(2)}</p>
+              )}
+            </div>
+
             <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm p-4 rounded-md">
-              <strong>Instructions:</strong> Please send exactly <strong>${selectedPlan?.priceAmount.toLocaleString()}</strong> worth of crypto to one of the addresses below. After sending, click "Payment Done".
+              <strong>Instructions:</strong> Please send exactly <strong>${Number(depositAmount || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong> worth of crypto to one of the addresses below. After sending, click "Payment Done".
             </div>
 
             <div className="space-y-3">
@@ -229,10 +255,10 @@ function Investments() {
           </div>
 
           <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
-            <Button type="button" variant="outline" onClick={() => setSelectedPlan(null)} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={() => { setSelectedPlan(null); setDepositAmount(""); }} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button type="button" className="bg-gold text-navy hover:brightness-110" onClick={handlePaymentDone} disabled={isSubmitting}>
+            <Button type="button" className="bg-gold text-navy hover:brightness-110" onClick={handlePaymentDone} disabled={isSubmitting || !depositAmount || Number(depositAmount) < (selectedPlan?.minAmount || 0)}>
               {isSubmitting ? "Submitting..." : "Payment Done"}
             </Button>
           </DialogFooter>

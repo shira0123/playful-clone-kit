@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Bell, User, Settings, ArrowRight, TrendingUp, Wallet, Activity,
   ArrowUpRight, ArrowDownRight, BarChart3, Zap, Globe2, Clock,
-  Shield, ChevronRight, Sparkles, CircleDollarSign
+  Shield, ChevronRight, Sparkles, CircleDollarSign, CheckCircle2, Users
 } from "lucide-react";
 
 type SafeUser = {
@@ -134,7 +134,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState<SafeUser | null>(null);
   const [notifications, setNotifications] = useState<Array<{ id: string; title: string; body: string }>>([]);
-  const [stats, setStats] = useState({ totalInvested: 0, activeCount: 0, pendingCount: 0 });
+  const [stats, setStats] = useState({ balance: 0, totalInvested: 0, totalWithdrawal: 0, profits: 0, bonus: 0, referralCommission: 0, activeCount: 0, pendingCount: 0 });
   const [loading, setLoading] = useState(true);
   const [signals] = useState<Signal[]>(generateSignals);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -210,58 +210,77 @@ function Dashboard() {
         </Button>
       </div>
 
-      {/* Portfolio Stats - 4 column */}
-      <div className="mt-6 grid gap-4 grid-cols-2 lg:grid-cols-4">
+      {/* Portfolio Stats - Grid */}
+      <div className="mt-6 grid gap-4 grid-cols-2 lg:grid-cols-3">
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-green-500/10 to-transparent rounded-bl-full" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Balance</CardTitle>
+            <div className="p-2 rounded-lg bg-green-500/10"><Wallet className="h-4 w-4 text-green-600" /></div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-navy">${stats.balance.toLocaleString()}</div>
+            <p className="mt-1 text-xs text-muted-foreground">Available funds</p>
+          </CardContent>
+        </Card>
+        
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-gold/10 to-transparent rounded-bl-full" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Invested</CardTitle>
-            <div className="p-2 rounded-lg bg-gold/10"><Wallet className="h-4 w-4 text-gold" /></div>
+            <div className="p-2 rounded-lg bg-gold/10"><Activity className="h-4 w-4 text-gold" /></div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-navy">${stats.totalInvested.toLocaleString()}</div>
-            <p className="mt-1 text-xs text-muted-foreground">Active portfolio balance</p>
+            <p className="mt-1 text-xs text-muted-foreground">{stats.activeCount} active plans</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full" />
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-red-500/10 to-transparent rounded-bl-full" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active Plans</CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-500/10"><Activity className="h-4 w-4 text-emerald-600" /></div>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Withdrawal</CardTitle>
+            <div className="p-2 rounded-lg bg-red-500/10"><ArrowUpRight className="h-4 w-4 text-red-600" /></div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-navy">{stats.activeCount}</div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {stats.pendingCount > 0 ? <span className="text-amber-600 font-medium">{stats.pendingCount} pending approval</span> : "No pending approvals"}
-            </p>
+            <div className="text-2xl font-bold text-navy">${stats.totalWithdrawal.toLocaleString()}</div>
+            <p className="mt-1 text-xs text-muted-foreground">Processed</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-bl-full" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Estimated ROI</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Profits</CardTitle>
             <div className="p-2 rounded-lg bg-blue-500/10"><CircleDollarSign className="h-4 w-4 text-blue-600" /></div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-navy flex items-center gap-1">
-              {stats.activeCount > 0 ? "Active" : "—"}
-              {stats.activeCount > 0 && <ArrowUpRight className="h-4 w-4 text-emerald-500" />}
-            </div>
-            <p className="mt-1 text-xs text-muted-foreground">Returns generating daily</p>
+            <div className="text-2xl font-bold text-navy">${stats.profits.toLocaleString()}</div>
+            <p className="mt-1 text-xs text-muted-foreground">Generated returns</p>
           </CardContent>
         </Card>
 
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-purple-500/10 to-transparent rounded-bl-full" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Notifications</CardTitle>
-            <div className="p-2 rounded-lg bg-purple-500/10"><Bell className="h-4 w-4 text-purple-600" /></div>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Bonus</CardTitle>
+            <div className="p-2 rounded-lg bg-purple-500/10"><CheckCircle2 className="h-4 w-4 text-purple-600" /></div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-navy">{notifications.length}</div>
-            <p className="mt-1 text-xs text-muted-foreground">New updates</p>
+            <div className="text-2xl font-bold text-navy">${stats.bonus.toLocaleString()}</div>
+            <p className="mt-1 text-xs text-muted-foreground">Platform bonuses</p>
+          </CardContent>
+        </Card>
+
+        <Card className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-full" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Referral Commission</CardTitle>
+            <div className="p-2 rounded-lg bg-orange-500/10"><Users className="h-4 w-4 text-orange-600" /></div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-navy">${stats.referralCommission.toLocaleString()}</div>
+            <p className="mt-1 text-xs text-muted-foreground">From network</p>
           </CardContent>
         </Card>
       </div>

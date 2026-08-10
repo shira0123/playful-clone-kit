@@ -9,7 +9,10 @@ async function main() {
   const plans = [
     {
       name: "Beginners Plan",
-      priceAmount: 200,
+      minAmount: 200,
+      maxAmount: 3999,
+      roiPercentage: 3,
+      durationDays: 1,
       roiDisplay: "3% Daily",
       durationDisplay: "24 Hours",
       features: [
@@ -25,7 +28,10 @@ async function main() {
     },
     {
       name: "Standard Plan",
-      priceAmount: 5000,
+      minAmount: 5000,
+      maxAmount: 9999,
+      roiPercentage: 5,
+      durationDays: 5,
       roiDisplay: "5% Daily for 5 Days",
       durationDisplay: "5 Days",
       features: [
@@ -41,7 +47,10 @@ async function main() {
     },
     {
       name: "Advanced Plan",
-      priceAmount: 10000,
+      minAmount: 10000,
+      maxAmount: 29000,
+      roiPercentage: 8,
+      durationDays: 21,
       roiDisplay: "8% Daily for 21 Days",
       durationDisplay: "21 Days",
       features: [
@@ -57,7 +66,10 @@ async function main() {
     },
     {
       name: "Professional Plan",
-      priceAmount: 30000,
+      minAmount: 30000,
+      maxAmount: 1000000,
+      roiPercentage: 12,
+      durationDays: 365,
       roiDisplay: "12% Daily",
       durationDisplay: "Optional",
       features: [

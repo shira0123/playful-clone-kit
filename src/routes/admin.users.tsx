@@ -7,7 +7,8 @@ import {
   adminResetPassword, 
   adminVerifyEmail, 
   changeAdminUserStatus, 
-  getAdminUsers 
+  getAdminUsers,
+  adminUpdateUserFunds
 } from "@/server-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +41,8 @@ import {
   KeyRound, 
   Trash2, 
   Users as UsersIcon, 
-  Eye 
+  Eye,
+  CircleDollarSign
 } from "lucide-react";
 
 type User = { 
@@ -51,6 +53,12 @@ type User = {
   emailVerifiedAt: Date | null; 
   firstName: string | null; 
   lastName: string | null;
+  balance?: number | null;
+  totalInvested?: number | null;
+  totalWithdrawal?: number | null;
+  profits?: number | null;
+  bonus?: number | null;
+  referralCommission?: number | null;
 };
 
 export const Route = createFileRoute("/admin/users")({ component: Users });
@@ -63,6 +71,11 @@ function Users() {
   const [isLoading, setIsLoading] = useState(true);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [userToVerify, setUserToVerify] = useState<User | null>(null);
+  const [fundManageUser, setFundManageUser] = useState<User | null>(null);
+  const [fundField, setFundField] = useState<"balance" | "profits" | "bonus" | "referralCommission">("balance");
+  const [fundAmount, setFundAmount] = useState("");
+  const [fundAction, setFundAction] = useState<"add" | "deduct">("add");
+  const [isSubmittingFund, setIsSubmittingFund] = useState(false);
 
   const load = (q: string, p: number) => {
     setIsLoading(true);
@@ -190,9 +203,15 @@ function Users() {
                           
                           <DropdownMenuSeparator />
                           
-                          <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => setUserToDelete(user)}>
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete
+                          <DropdownMenuItem onClick={() => setFundManageUser(user)}>
+                            <CircleDollarSign className="mr-2 h-4 w-4" /> Manage Funds
                           </DropdownMenuItem>
+
+                          {user.role !== "super_admin" && (
+                            <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => setUserToDelete(user)}>
+                              <Trash2 className="mr-2 h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -273,6 +292,95 @@ function Users() {
             >
               Verify User
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    {/* Manage Funds Modal */}
+      <AlertDialog open={!!fundManageUser} onOpenChange={(open) => {
+        if (!open) {
+          setFundManageUser(null);
+          setFundAmount("");
+          setFundAction("add");
+          setFundField("balance");
+        }
+      }}>
+        <AlertDialogContent className="sm:max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Manage Funds: {fundManageUser?.email}</AlertDialogTitle>
+            <AlertDialogDescription>Add or deduct funds from this user's account balances.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Field</label>
+                <select 
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={fundField}
+                  onChange={(e: any) => setFundField(e.target.value)}
+                >
+                  <option value="balance">Wallet Balance</option>
+                  <option value="profits">Profits</option>
+                  <option value="bonus">Bonus</option>
+                  <option value="referralCommission">Referral Commission</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Action</label>
+                <select 
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={fundAction}
+                  onChange={(e: any) => setFundAction(e.target.value)}
+                >
+                  <option value="add">Add Funds</option>
+                  <option value="deduct">Deduct Funds</option>
+                </select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Amount ($)</label>
+              <Input 
+                type="number" 
+                min="0"
+                step="0.01"
+                placeholder="0.00" 
+                value={fundAmount} 
+                onChange={(e) => setFundAmount(e.target.value)} 
+              />
+            </div>
+            {fundManageUser && (
+              <div className="bg-slate-50 p-3 rounded-md text-sm border">
+                <p><strong>Current {fundField}:</strong> ${(fundManageUser as any)[fundField]?.toLocaleString() || 0}</p>
+                <p><strong>New {fundField}:</strong> ${
+                  fundAction === "add" 
+                    ? ((fundManageUser as any)[fundField] || 0) + Number(fundAmount || 0)
+                    : Math.max(0, ((fundManageUser as any)[fundField] || 0) - Number(fundAmount || 0))
+                }</p>
+              </div>
+            )}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isSubmittingFund}>Cancel</AlertDialogCancel>
+            <Button 
+              className={fundAction === "add" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}
+              disabled={!fundAmount || Number(fundAmount) <= 0 || isSubmittingFund}
+              onClick={async () => {
+                if (!fundManageUser || !fundAmount || isNaN(Number(fundAmount))) return;
+                setIsSubmittingFund(true);
+                try {
+                  await adminUpdateUserFunds({ data: { userId: fundManageUser.id, field: fundField, amount: Number(fundAmount), action: fundAction } });
+                  toast.success("User funds updated successfully.");
+                  setFundManageUser(null);
+                  setFundAmount("");
+                  load(searchQuery, page);
+                } catch(e: any) {
+                  toast.error(e.message || "Failed to update funds.");
+                } finally {
+                  setIsSubmittingFund(false);
+                }
+              }}
+            >
+              {isSubmittingFund ? "Processing..." : fundAction === "add" ? "Add Funds" : "Deduct Funds"}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

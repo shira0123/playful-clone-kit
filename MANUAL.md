@@ -90,6 +90,15 @@ By default, the first user to register doesn't have admin rights. To promote an 
 - **Impersonate User:** Login as any user instantly to troubleshoot issues. *(Note: Impersonating immediately logs you out of your Admin session and redirects you to the user dashboard. To regain admin access, sign out of the user's account and log back in).*
 - **Manage Investments:** Review, Approve, Reject, or Cancel active investment plans. Admins are automatically hidden from this list to prevent clutter.
 
+### Super Admin Role
+To strictly enforce administrative powers (such as creating or deleting other admins) and managing global funds, the platform supports a single `super_admin` role. 
+1. Register an account normally.
+2. Run the super admin script:
+   ```bash
+   npx tsx src/server/scripts/make-super-admin.ts <your-email@example.com>
+   ```
+*Note: Running this script automatically demotes any existing Super Admin back to a regular Admin, ensuring only one Super Admin exists at any given time.*
+
 ---
 
 ### Modifying Crypto Wallets & Plans
@@ -98,3 +107,13 @@ If you need to update wallet addresses or add new plans:
 1. Open `src/server/db/seed.ts`.
 2. Update the `cryptoWallets` array or `investmentPlans` array.
 3. Run `npx tsx src/server/db/seed.ts`.
+
+---
+
+### Daily ROI Processing
+To automatically distribute daily profits to users based on their active investment plans, run the provided script on a schedule (e.g. daily at midnight via CRON or PM2).
+
+```bash
+npx tsx src/server/scripts/process-daily-roi.ts
+```
+This script will loop through all `active` investments, calculate the daily returns from the plan's `roiPercentage`, update the user's `profits` balance, and update the investment's `currentProfit` tracking field.

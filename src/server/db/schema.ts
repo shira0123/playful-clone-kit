@@ -6,7 +6,7 @@ const timestamps = {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 };
 
-export const userRole = pgEnum("user_role", ["user", "admin"]);
+export const userRole = pgEnum("user_role", ["user", "admin", "super_admin"]);
 export const userStatus = pgEnum("user_status", ["active", "suspended"]);
 export const investmentStatus = pgEnum("investment_status", ["pending", "active", "completed", "rejected"]);
 export const kycStatus = pgEnum("kyc_status", ["pending", "approved", "rejected"]);
@@ -31,6 +31,12 @@ export const profiles = pgTable("profiles", {
   lastName: text("last_name").notNull(),
   phone: text("phone"),
   avatarUrl: text("avatar_url"),
+  balance: integer("balance").notNull().default(0),
+  totalInvested: integer("total_invested").notNull().default(0),
+  totalWithdrawal: integer("total_withdrawal").notNull().default(0),
+  profits: integer("profits").notNull().default(0),
+  bonus: integer("bonus").notNull().default(0),
+  referralCommission: integer("referral_commission").notNull().default(0),
   ...timestamps,
 });
 
@@ -86,7 +92,10 @@ export const notifications = pgTable("notifications", {
 export const investmentPlans = pgTable("investment_plans", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
-  priceAmount: integer("price_amount").notNull(),
+  minAmount: integer("min_amount").notNull(),
+  maxAmount: integer("max_amount").notNull(),
+  roiPercentage: integer("roi_percentage").notNull(),
+  durationDays: integer("duration_days").notNull(),
   roiDisplay: text("roi_display").notNull(),
   durationDisplay: text("duration_display").notNull(),
   features: jsonb("features").notNull().$type<string[]>(),
@@ -108,6 +117,8 @@ export const investments = pgTable("investments", {
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   planId: uuid("plan_id").notNull().references(() => investmentPlans.id, { onDelete: "restrict" }),
   amount: integer("amount").notNull(),
+  currentProfit: integer("current_profit").notNull().default(0),
+  isExtended: boolean("is_extended").notNull().default(false),
   cryptoAddressUsed: text("crypto_address_used"),
   status: investmentStatus("status").notNull().default("pending"),
   startedAt: timestamp("started_at", { withTimezone: true }),

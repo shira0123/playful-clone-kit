@@ -5,9 +5,18 @@ import { getAdminInvestments, approveInvestment, rejectInvestment, cancelInvestm
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Check, X } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/admin/investments")({ component: AdminInvestments });
 
@@ -30,6 +39,8 @@ type Investment = {
 function AdminInvestments() {
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [approveModalOpen, setApproveModalOpen] = useState<Investment | null>(null);
+  const [approveAmount, setApproveAmount] = useState<string>("");
 
   const loadData = async () => {
     try {
@@ -46,10 +57,12 @@ function AdminInvestments() {
     void loadData();
   }, []);
 
-  const handleApprove = async (id: string) => {
+  const confirmApprove = async () => {
+    if (!approveModalOpen || !approveAmount) return;
     try {
-      await approveInvestment({ data: { id } });
+      await approveInvestment({ data: { id: approveModalOpen.id, newAmount: Number(approveAmount) } });
       toast.success("Investment approved successfully");
+      setApproveModalOpen(null);
       await loadData();
     } catch (err) {
       toast.error("Failed to approve investment");
@@ -130,7 +143,7 @@ function AdminInvestments() {
                       <td className="px-6 py-4 text-right">
                         {inv.status === "pending" && (
                           <div className="flex justify-end gap-2">
-                            <Button size="sm" variant="outline" className="text-green-600 hover:text-green-700 hover:bg-green-50" onClick={() => handleApprove(inv.id)}>
+                            <Button size="sm" variant="outline" className="text-green-600 hover:text-green-700 hover:bg-green-50" onClick={() => { setApproveModalOpen(inv); setApproveAmount(inv.amount.toString()); }}>
                               <Check className="h-4 w-4 mr-1" /> Approve
                             </Button>
                             <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleReject(inv.id)}>
@@ -154,6 +167,31 @@ function AdminInvestments() {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={!!approveModalOpen} onOpenChange={(open) => !open && setApproveModalOpen(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm & Edit Deposit</DialogTitle>
+            <DialogDescription>
+              Confirm the final deposit amount for this investment. This will be added to the user's Total Invested balance.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <label className="text-sm font-medium mb-2 block">Deposit Amount ($)</label>
+            <Input 
+              type="number" 
+              min="0"
+              step="0.01"
+              value={approveAmount} 
+              onChange={(e) => setApproveAmount(e.target.value)} 
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setApproveModalOpen(null)}>Cancel</Button>
+            <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={confirmApprove}>Confirm Approval</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

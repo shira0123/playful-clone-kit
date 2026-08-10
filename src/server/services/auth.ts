@@ -9,8 +9,8 @@ import { email } from "./email";
 
 const sessionDurationSeconds = 60 * 60 * 24 * 14;
 const cookieOptions = { httpOnly: true, sameSite: "lax" as const, secure: env.NODE_ENV === "production", path: "/", maxAge: sessionDurationSeconds };
-export type SafeUser = { id: string; email: string; role: "user" | "admin"; status: "active" | "suspended"; emailVerified: boolean; firstName: string; lastName: string; impersonatorId: string | null };
-function publicUser(row: { id: string; email: string; role: "user" | "admin"; status: "active" | "suspended"; emailVerifiedAt: Date | null; firstName: string | null; lastName: string | null; impersonatorId?: string | null }): SafeUser {
+export type SafeUser = { id: string; email: string; role: "user" | "admin" | "super_admin"; status: "active" | "suspended"; emailVerified: boolean; firstName: string; lastName: string; impersonatorId: string | null };
+function publicUser(row: { id: string; email: string; role: "user" | "admin" | "super_admin"; status: "active" | "suspended"; emailVerifiedAt: Date | null; firstName: string | null; lastName: string | null; impersonatorId?: string | null }): SafeUser {
   return { id: row.id, email: row.email, role: row.role, status: row.status, emailVerified: Boolean(row.emailVerifiedAt), firstName: row.firstName ?? "", lastName: row.lastName ?? "", impersonatorId: row.impersonatorId ?? null };
 }
 async function getUserByEmail(emailAddress: string) {
@@ -35,7 +35,8 @@ export async function currentUser(): Promise<SafeUser | null> {
   return publicUser(row);
 }
 export async function requireUser() { const user = await currentUser(); assert(user, 401, "Please sign in to continue."); return user; }
-export async function requireAdmin() { const user = await requireUser(); assert(user.role === "admin" && !user.impersonatorId, 403, "Administrator access is required."); return user; }
+export async function requireAdmin() { const user = await requireUser(); assert((user.role === "admin" || user.role === "super_admin") && !user.impersonatorId, 403, "Administrator access is required."); return user; }
+export async function requireSuperAdmin() { const user = await requireUser(); assert(user.role === "super_admin" && !user.impersonatorId, 403, "Super Administrator access is required."); return user; }
 export async function register(input: { email: string; password: string; firstName: string; lastName: string }) {
   assert(!(await getUserByEmail(input.email)), 409, "An account with that email already exists.");
   const [user] = await db.insert(users).values({ email: input.email, passwordHash: await hashPassword(input.password) }).returning({ id: users.id, email: users.email });

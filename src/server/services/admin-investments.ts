@@ -37,15 +37,28 @@ export async function getAllInvestments(query = "", page = 0) {
     .offset(page * 25);
 }
 
-export async function approveInvestment(id: string) {
+export async function approveInvestment(id: string, newAmount?: number) {
   await requireAdmin();
+  const [inv] = await db.select().from(investments).where(eq(investments.id, id));
+  if (!inv || inv.status !== "pending") throw new Error("Invalid or non-pending investment");
+
+  const finalAmount = newAmount ?? inv.amount;
+
   await db.update(investments)
     .set({ 
-      status: "active", 
+      status: "active",
+      amount: finalAmount, 
       startedAt: new Date(),
       updatedAt: new Date()
     })
     .where(eq(investments.id, id));
+
+  const [profile] = await db.select().from(profiles).where(eq(profiles.userId, inv.userId));
+  if (profile) {
+    await db.update(profiles)
+      .set({ totalInvested: profile.totalInvested + finalAmount, updatedAt: new Date() })
+      .where(eq(profiles.userId, inv.userId));
+  }
 }
 
 export async function rejectInvestment(id: string) {
@@ -60,12 +73,24 @@ export async function rejectInvestment(id: string) {
 
 export async function cancelInvestment(id: string) {
   await requireAdmin();
+  const [inv] = await db.select().from(investments).where(eq(investments.id, id));
+  if (!inv) throw new Error("Investment not found");
+
   await db.update(investments)
     .set({ 
       status: "rejected", 
       updatedAt: new Date()
     })
     .where(eq(investments.id, id));
+
+  if (inv.status === "active") {
+    const [profile] = await db.select().from(profiles).where(eq(profiles.userId, inv.userId));
+    if (profile) {
+      await db.update(profiles)
+        .set({ totalInvested: Math.max(0, profile.totalInvested - inv.amount), updatedAt: new Date() })
+        .where(eq(profiles.userId, inv.userId));
+    }
+  }
 }
 
 export async function getAdminInvestmentStats() {
