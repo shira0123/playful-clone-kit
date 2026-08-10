@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { processDailyRoi } from "./server/services/investment";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -44,9 +45,41 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+const JSON_HEADERS = { "content-type": "application/json" };
+
+async function handleCronDailyRoi(request: Request): Promise<Response> {
+  const authHeader = request.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: JSON_HEADERS,
+    });
+  }
+
+  try {
+    const result = await processDailyRoi();
+    return new Response(JSON.stringify({ success: true, ...result }), {
+      status: 200,
+      headers: JSON_HEADERS,
+    });
+  } catch (error) {
+    console.error("Error processing daily ROI:", error);
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+      status: 500,
+      headers: JSON_HEADERS,
+    });
+  }
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      // Intercept cron endpoint before TanStack router
+      const url = new URL(request.url);
+      if (url.pathname === "/api/cron/process-daily-roi") {
+        return await handleCronDailyRoi(request);
+      }
+
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
