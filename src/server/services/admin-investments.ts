@@ -131,3 +131,55 @@ export async function deleteAdminWallet(id: string) {
   await requireAdmin();
   await db.delete(cryptoWallets).where(eq(cryptoWallets.id, id));
 }
+
+// ==========================================
+// Investment Plans Management
+// ==========================================
+
+export async function createInvestmentPlan(data: {
+  name: string;
+  minAmount: number;
+  maxAmount: number;
+  roiPercentage: number;
+  durationDays: number;
+  roiDisplay: string;
+  durationDisplay: string;
+  features: string[];
+  isPopular: boolean;
+  isActive: boolean;
+}) {
+  await requireAdmin();
+  const [newPlan] = await db.insert(investmentPlans).values(data).returning();
+  return newPlan;
+}
+
+export async function updateInvestmentPlan(id: string, data: {
+  name?: string;
+  minAmount?: number;
+  maxAmount?: number;
+  roiPercentage?: number;
+  durationDays?: number;
+  roiDisplay?: string;
+  durationDisplay?: string;
+  features?: string[];
+  isPopular?: boolean;
+  isActive?: boolean;
+}) {
+  await requireAdmin();
+  const [updatedPlan] = await db.update(investmentPlans)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(investmentPlans.id, id))
+    .returning();
+  
+  if (!updatedPlan) throw new Error("Plan not found");
+  return updatedPlan;
+}
+
+export async function deleteInvestmentPlan(id: string) {
+  await requireAdmin();
+  const activeInvestments = await db.select().from(investments).where(and(eq(investments.planId, id), eq(investments.status, "active"))).limit(1);
+  if (activeInvestments.length > 0) {
+    throw new Error("Cannot delete plan. There are active investments using this plan. Please deactivate it instead.");
+  }
+  await db.delete(investmentPlans).where(eq(investmentPlans.id, id));
+}

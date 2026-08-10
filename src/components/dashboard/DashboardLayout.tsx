@@ -54,6 +54,7 @@ export function DashboardLayout({
   const adminNavItems = [
     { to: "/admin", label: "Overview", icon: Shield },
     { to: "/admin/investments", label: "Investments", icon: Activity },
+    { to: "/admin/investment-plans", label: "Investment Plans", icon: Activity },
     { to: "/admin/wallets", label: "Crypto Wallets", icon: Wallet },
     { to: "/admin/kyc", label: "KYC Reviews", icon: FileCheck },
     { to: "/admin/users", label: "Users", icon: UsersIcon },
