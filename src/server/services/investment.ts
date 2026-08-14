@@ -99,8 +99,8 @@ export async function processDailyRoi() {
     const [plan] = await db.select().from(investmentPlans).where(eq(investmentPlans.id, inv.planId));
     if (!plan) continue;
 
-    // Daily ROI = amount * (roiPercentage / 100)
-    const dailyProfit = inv.amount * (plan.roiPercentage / 100);
+    // Daily ROI = amount * (roiPercentage / 100), rounded to whole cents
+    const dailyProfit = Math.round(inv.amount * (plan.roiPercentage / 100));
 
     await db.update(investments).set({
       currentProfit: (inv.currentProfit || 0) + dailyProfit,
@@ -115,7 +115,6 @@ export async function processDailyRoi() {
     if (profile) {
       await db.update(profiles).set({
         profits: (profile.profits || 0) + profit,
-        balance: (profile.balance || 0) + profit, // Also update balance so it's withdrawable
         updatedAt: new Date()
       }).where(eq(profiles.userId, userId));
     }
