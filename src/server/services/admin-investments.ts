@@ -42,13 +42,20 @@ export async function approveInvestment(id: string, newAmount?: number) {
   const [inv] = await db.select().from(investments).where(eq(investments.id, id));
   if (!inv || inv.status !== "pending") throw new Error("Invalid or non-pending investment");
 
+  const [plan] = await db.select().from(investmentPlans).where(eq(investmentPlans.id, inv.planId));
+  if (!plan) throw new Error("Investment plan not found");
+
   const finalAmount = newAmount ?? inv.amount;
+  
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + plan.durationDays);
 
   await db.update(investments)
     .set({ 
       status: "active",
       amount: finalAmount, 
       startedAt: new Date(),
+      expiresAt: expiresAt,
       updatedAt: new Date()
     })
     .where(eq(investments.id, id));

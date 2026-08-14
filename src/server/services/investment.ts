@@ -86,6 +86,7 @@ export async function processDailyRoi() {
     amount: investments.amount,
     currentProfit: investments.currentProfit,
     planId: investments.planId,
+    expiresAt: investments.expiresAt,
   }).from(investments).where(eq(investments.status, "active"));
 
   if (activeInvestments.length === 0) {
@@ -101,9 +102,13 @@ export async function processDailyRoi() {
 
     // Daily ROI = amount * (roiPercentage / 100), rounded to whole cents
     const dailyProfit = Math.round(inv.amount * (plan.roiPercentage / 100));
+    
+    // Check if the investment has reached its expiration date
+    const isExpired = inv.expiresAt && new Date() >= new Date(inv.expiresAt);
 
     await db.update(investments).set({
       currentProfit: (inv.currentProfit || 0) + dailyProfit,
+      status: isExpired ? "completed" : "active",
       updatedAt: new Date()
     }).where(eq(investments.id, inv.id));
 
