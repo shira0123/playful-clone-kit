@@ -92,7 +92,7 @@ export function DashboardLayout({
   const renderNavContent = () => (
     <div className="flex h-full flex-col">
       <div className="p-6">
-        <Link to="/" className="font-display text-xl font-bold tracking-tight text-navy">
+        <Link to={admin ? "/admin" : "/dashboard"} className="font-display text-xl font-bold tracking-tight text-navy">
           EVOLVE <span className="text-gold">TRADE HUB</span>
         </Link>
       </div>
@@ -142,7 +142,7 @@ export function DashboardLayout({
     <div className="flex min-h-screen w-full flex-col bg-slate-50 lg:flex-row">
       {/* Mobile Header */}
       <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-navy px-4 text-white lg:hidden">
-        <Link to="/" className="font-display text-lg font-bold">
+        <Link to={admin ? "/admin" : "/dashboard"} className="font-display text-lg font-bold">
           EVOLVE <span className="text-gold">TRADE HUB</span>
         </Link>
         <Sheet>
