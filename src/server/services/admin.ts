@@ -1,7 +1,7 @@
 import { and, desc, eq, ilike, ne, or, sql } from "drizzle-orm";
 import { db } from "../db";
 import { auditLogs, profiles, sessions, users } from "../db/schema";
-import { createSession, requireAdmin, requestPasswordReset, requireSuperAdmin } from "./auth";
+import { createSession, requireAdmin, requestPasswordReset, requireSuperAdmin, currentUser } from "./auth";
 
 async function audit(actorId: string, action: string, targetUserId?: string) { await db.insert(auditLogs).values({ actorId, targetUserId, action }); }
 export async function adminOverview() {
