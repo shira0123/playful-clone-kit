@@ -115,6 +115,7 @@ export async function processDailyRoi() {
     if (profile) {
       await db.update(profiles).set({
         profits: (profile.profits || 0) + profit,
+        balance: (profile.balance || 0) + profit,
         updatedAt: new Date()
       }).where(eq(profiles.userId, userId));
     }
