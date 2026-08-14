@@ -12,13 +12,15 @@ export async function adminOverview() {
 export async function listUsers(query = "", page = 0) {
   const admin = await requireAdmin(); const term = `%${query.trim()}%`;
   const filter = query ? or(ilike(users.email, term), ilike(profiles.firstName, term), ilike(profiles.lastName, term)) : undefined;
+  const roleFilter = admin.role !== "super_admin" ? ne(users.role, "super_admin") : undefined;
+  
   return db.select({ 
     id: users.id, email: users.email, role: users.role, status: users.status, 
     emailVerifiedAt: users.emailVerifiedAt, createdAt: users.createdAt, 
     firstName: profiles.firstName, lastName: profiles.lastName,
     balance: profiles.balance, totalInvested: profiles.totalInvested,
     profits: profiles.profits, bonus: profiles.bonus, referralCommission: profiles.referralCommission
-  }).from(users).leftJoin(profiles, eq(profiles.userId, users.id)).where(and(filter, ne(users.id, admin.id))).orderBy(desc(users.createdAt)).limit(25).offset(page * 25);
+  }).from(users).leftJoin(profiles, eq(profiles.userId, users.id)).where(and(filter, ne(users.id, admin.id), roleFilter)).orderBy(desc(users.createdAt)).limit(25).offset(page * 25);
 }
 export async function setUserStatus(targetUserId: string, status: "active" | "suspended") { const admin = await requireAdmin(); await db.update(users).set({ status, updatedAt: new Date() }).where(eq(users.id, targetUserId)); if (status === "suspended") await db.delete(sessions).where(eq(sessions.userId, targetUserId)); await audit(admin.id, `user.${status === "suspended" ? "suspended" : "reactivated"}`, targetUserId); }
 export async function verifyUserEmail(targetUserId: string) { const admin = await requireAdmin(); await db.update(users).set({ emailVerifiedAt: new Date(), updatedAt: new Date() }).where(eq(users.id, targetUserId)); await audit(admin.id, "user.email_verified", targetUserId); }
@@ -58,6 +60,13 @@ export async function updateUserFunds(targetUserId: string, field: "balance" | "
 export async function sendAdminPasswordReset(targetUserId: string) { const admin = await requireAdmin(); const [target] = await db.select({ email: users.email }).from(users).where(eq(users.id, targetUserId)).limit(1); if (target) { try { await requestPasswordReset(target.email); } catch (err: any) { throw new Error(err.message || "Failed to send reset email. Check Resend configuration."); } } await audit(admin.id, "user.password_reset_requested", targetUserId); }
 export async function impersonateUser(targetUserId: string) { 
   const admin = await requireAdmin(); 
+  
+  const [target] = await db.select({ role: users.role }).from(users).where(eq(users.id, targetUserId)).limit(1);
+  if (!target) throw new Error("User not found.");
+  if (target.role === "super_admin") {
+     throw new Error("Cannot impersonate a Super Administrator.");
+  }
+  
   await createSession(targetUserId, admin.id); 
   await audit(admin.id, "user.impersonated", targetUserId); 
 }
