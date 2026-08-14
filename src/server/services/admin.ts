@@ -31,8 +31,8 @@ export async function deleteUser(targetUserId: string) {
      if (admin.role !== "super_admin") throw new Error("You do not have permission to delete other administrators.");
      if (targetUser.role === "super_admin") throw new Error("This administrator cannot be deleted.");
   }
-  await db.delete(users).where(and(eq(users.id, targetUserId), sql`${users.id} <> ${admin.id}`)); 
   await audit(admin.id, "user.deleted", targetUserId); 
+  await db.delete(users).where(and(eq(users.id, targetUserId), sql`${users.id} <> ${admin.id}`)); 
 }
 
 export async function setUserRole(targetUserId: string, role: "admin" | "user") {
