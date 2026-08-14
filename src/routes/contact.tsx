@@ -31,10 +31,10 @@ function ContactPage() {
               <div className="flex items-start gap-3">
                 <Mail className="text-gold mt-0.5 shrink-0" size={18} />
                 <a
-                  href="mailto:notifications@evolvetradehub.com"
+                  href="mailto:support@evolvetradehub.com"
                   className="min-w-0 break-words hover:text-gold transition-colors"
                 >
-                  notifications@evolvetradehub.com
+                  support@evolvetradehub.com
                 </a>
               </div>
               <div className="flex items-start gap-3">
