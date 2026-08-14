@@ -32,9 +32,12 @@ function WithdrawPage() {
     void getCurrentUser().then((u) => {
       if (!u) return navigate({ to: "/login" });
       setUser(u);
-      Promise.all([getPortfolioStats(), getUserWithdrawals()]).then(([s, w]) => {
+      Promise.all([
+        getPortfolioStats().catch(() => ({ balance: 0, totalInvested: 0, totalWithdrawal: 0, profits: 0, bonus: 0, referralCommission: 0, activeCount: 0, pendingCount: 0 })),
+        getUserWithdrawals().catch(() => []),
+      ]).then(([s, w]) => {
         setStats(s);
-        setWithdrawals(w);
+        setWithdrawals(w as any[]);
         setLoading(false);
       });
     });

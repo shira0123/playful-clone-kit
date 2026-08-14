@@ -39,7 +39,7 @@ function AdminWithdrawalsPage() {
       const data = await getAdminWithdrawals();
       setWithdrawals(data);
     } catch (err) {
-      toast.error("Failed to load withdrawals");
+      toast.error("Failed to load withdrawals. The database table may not exist yet — run db:push first.");
     } finally {
       setLoading(false);
     }
