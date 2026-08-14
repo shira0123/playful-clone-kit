@@ -9,8 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Bell, User, Settings, ArrowRight, TrendingUp, Wallet, Activity,
   ArrowUpRight, ArrowDownRight, BarChart3, Zap, Globe2, Clock,
-  Shield, ChevronRight, Sparkles, CircleDollarSign, CheckCircle2, Users
+  Shield, ChevronRight, Sparkles, CircleDollarSign, CheckCircle2, Users, Info
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type SafeUser = {
   id: string; email: string; role: string; status: string;
@@ -179,7 +180,9 @@ function Dashboard() {
       title={`Welcome back, ${user.firstName || "Investor"}`}
       userName={`${user.firstName} ${user.lastName}`.trim()}
       userEmail={user.email}
+      impersonatorId={user.impersonatorId}
     >
+      <TooltipProvider>
       {/* Status bar */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-1 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5">
@@ -215,7 +218,13 @@ function Dashboard() {
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-green-500/10 to-transparent rounded-bl-full" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Balance</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+              Total Balance
+              <Tooltip>
+                <TooltipTrigger asChild><Info className="h-3.5 w-3.5" /></TooltipTrigger>
+                <TooltipContent><p className="w-48 text-xs">Your available withdrawable funds (deposited funds + daily bonuses).</p></TooltipContent>
+              </Tooltip>
+            </CardTitle>
             <div className="p-2 rounded-lg bg-green-500/10"><Wallet className="h-4 w-4 text-green-600" /></div>
           </CardHeader>
           <CardContent>
@@ -227,7 +236,13 @@ function Dashboard() {
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-gold/10 to-transparent rounded-bl-full" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Invested</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+              Total Invested
+              <Tooltip>
+                <TooltipTrigger asChild><Info className="h-3.5 w-3.5" /></TooltipTrigger>
+                <TooltipContent><p className="w-48 text-xs">The total amount currently locked in active investment plans.</p></TooltipContent>
+              </Tooltip>
+            </CardTitle>
             <div className="p-2 rounded-lg bg-gold/10"><Activity className="h-4 w-4 text-gold" /></div>
           </CardHeader>
           <CardContent>
@@ -239,7 +254,13 @@ function Dashboard() {
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-red-500/10 to-transparent rounded-bl-full" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Withdrawal</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+              Total Withdrawal
+              <Tooltip>
+                <TooltipTrigger asChild><Info className="h-3.5 w-3.5" /></TooltipTrigger>
+                <TooltipContent><p className="w-48 text-xs">The total amount you have successfully withdrawn to date.</p></TooltipContent>
+              </Tooltip>
+            </CardTitle>
             <div className="p-2 rounded-lg bg-red-500/10"><ArrowUpRight className="h-4 w-4 text-red-600" /></div>
           </CardHeader>
           <CardContent>
@@ -251,7 +272,13 @@ function Dashboard() {
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-bl-full" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Profits</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+              Profits
+              <Tooltip>
+                <TooltipTrigger asChild><Info className="h-3.5 w-3.5" /></TooltipTrigger>
+                <TooltipContent><p className="w-48 text-xs">Total lifetime returns generated from your investments.</p></TooltipContent>
+              </Tooltip>
+            </CardTitle>
             <div className="p-2 rounded-lg bg-blue-500/10"><CircleDollarSign className="h-4 w-4 text-blue-600" /></div>
           </CardHeader>
           <CardContent>
@@ -263,7 +290,13 @@ function Dashboard() {
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-purple-500/10 to-transparent rounded-bl-full" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Bonus</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+              Bonus
+              <Tooltip>
+                <TooltipTrigger asChild><Info className="h-3.5 w-3.5" /></TooltipTrigger>
+                <TooltipContent><p className="w-48 text-xs">Promotional or sign-up bonuses granted by the platform.</p></TooltipContent>
+              </Tooltip>
+            </CardTitle>
             <div className="p-2 rounded-lg bg-purple-500/10"><CheckCircle2 className="h-4 w-4 text-purple-600" /></div>
           </CardHeader>
           <CardContent>
@@ -275,7 +308,13 @@ function Dashboard() {
         <Card className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-full" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Referral Commission</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+              Referral Commission
+              <Tooltip>
+                <TooltipTrigger asChild><Info className="h-3.5 w-3.5" /></TooltipTrigger>
+                <TooltipContent><p className="w-48 text-xs">Earnings from users who signed up using your referral link.</p></TooltipContent>
+              </Tooltip>
+            </CardTitle>
             <div className="p-2 rounded-lg bg-orange-500/10"><Users className="h-4 w-4 text-orange-600" /></div>
           </CardHeader>
           <CardContent>
@@ -440,6 +479,7 @@ function Dashboard() {
           </CardContent>
         </Card>
       </div>
+      </TooltipProvider>
     </DashboardLayout>
   );
 }

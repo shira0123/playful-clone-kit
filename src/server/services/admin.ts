@@ -56,5 +56,18 @@ export async function updateUserFunds(targetUserId: string, field: "balance" | "
   await audit(admin.id, `funds.${action}_${field}`, targetUserId);
 }
 export async function sendAdminPasswordReset(targetUserId: string) { const admin = await requireAdmin(); const [target] = await db.select({ email: users.email }).from(users).where(eq(users.id, targetUserId)).limit(1); if (target) { try { await requestPasswordReset(target.email); } catch (err: any) { throw new Error(err.message || "Failed to send reset email. Check Resend configuration."); } } await audit(admin.id, "user.password_reset_requested", targetUserId); }
-export async function impersonateUser(targetUserId: string) { const admin = await requireAdmin(); await createSession(targetUserId, admin.id); await audit(admin.id, "user.impersonated", targetUserId); }
+export async function impersonateUser(targetUserId: string) { 
+  const admin = await requireAdmin(); 
+  await createSession(targetUserId, admin.id); 
+  await audit(admin.id, "user.impersonated", targetUserId); 
+}
+
+export async function stopImpersonatingUser() {
+  const user = await currentUser();
+  if (!user?.impersonatorId) {
+    throw new Error("You are not currently impersonating anyone.");
+  }
+  // Restore the admin session
+  await createSession(user.impersonatorId);
+}
 export async function recentAuditLogs() { await requireAdmin(); return db.select({ id: auditLogs.id, action: auditLogs.action, createdAt: auditLogs.createdAt, actorEmail: users.email }).from(auditLogs).leftJoin(users, eq(auditLogs.actorId, users.id)).orderBy(desc(auditLogs.createdAt)).limit(50); }

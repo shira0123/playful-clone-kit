@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import {
   Menu,
   X,
@@ -14,11 +15,13 @@ import {
   Shield,
   Wallet,
   FileCheck,
+  ArrowUpRight,
+  EyeOff,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { logoutUser } from "@/server-fns";
+import { logoutUser, adminStopImpersonating } from "@/server-fns";
 
 interface DashboardLayoutProps {
   title: string;
@@ -26,6 +29,7 @@ interface DashboardLayoutProps {
   admin?: boolean;
   userName?: string;
   userEmail?: string;
+  impersonatorId?: string | null;
 }
 
 export function DashboardLayout({
@@ -34,6 +38,7 @@ export function DashboardLayout({
   admin = false,
   userName,
   userEmail,
+  impersonatorId,
 }: DashboardLayoutProps) {
   const navigate = useNavigate();
 
@@ -42,9 +47,20 @@ export function DashboardLayout({
     await navigate({ to: "/login" as any });
   }
 
+  async function handleStopImpersonating() {
+    try {
+      await adminStopImpersonating();
+      toast.success("Stopped impersonating. Returning to admin panel...");
+      window.location.href = "/admin"; // Force a hard refresh to re-init session
+    } catch (err: any) {
+      toast.error(err.message || "Failed to stop impersonating.");
+    }
+  }
+
   const userNavItems = [
     { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
     { to: "/dashboard/investments", label: "Investments", icon: Activity },
+    { to: "/dashboard/withdraw", label: "Withdrawals", icon: ArrowUpRight },
     { to: "/dashboard/profile", label: "Profile", icon: User },
     { to: "/dashboard/kyc", label: "KYC Verification", icon: FileCheck },
     { to: "/dashboard/settings", label: "Settings", icon: Settings },
@@ -57,6 +73,7 @@ export function DashboardLayout({
     { to: "/admin/investment-plans", label: "Investment Plans", icon: Activity },
     { to: "/admin/wallets", label: "Crypto Wallets", icon: Wallet },
     { to: "/admin/kyc", label: "KYC Reviews", icon: FileCheck },
+    { to: "/admin/withdrawals", label: "Withdrawals", icon: ArrowUpRight },
     { to: "/admin/users", label: "Users", icon: UsersIcon },
     { to: "/admin/audit", label: "Audit Logs", icon: ScrollText },
   ];
@@ -147,8 +164,22 @@ export function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 lg:pl-72">
-        <div className="mx-auto max-w-6xl p-4 md:p-8">
+      <main className="flex-1 lg:pl-72 flex flex-col">
+        {impersonatorId && (
+          <div className="bg-red-500 text-white px-4 py-3 sticky top-0 z-40 flex items-center justify-between shadow-md">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+              </span>
+              <span className="font-semibold text-sm">You are currently impersonating {userName}.</span>
+            </div>
+            <Button size="sm" variant="secondary" className="h-8 bg-white text-red-600 hover:bg-white/90" onClick={handleStopImpersonating}>
+              <EyeOff className="mr-2 h-4 w-4" /> Stop Impersonating
+            </Button>
+          </div>
+        )}
+        <div className="mx-auto max-w-6xl p-4 md:p-8 w-full">
           <div className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight text-navy">{title}</h1>
           </div>

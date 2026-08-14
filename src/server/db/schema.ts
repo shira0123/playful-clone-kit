@@ -11,6 +11,7 @@ export const userStatus = pgEnum("user_status", ["active", "suspended"]);
 export const investmentStatus = pgEnum("investment_status", ["pending", "active", "completed", "rejected"]);
 export const kycStatus = pgEnum("kyc_status", ["pending", "approved", "rejected"]);
 export const kycDocumentType = pgEnum("kyc_document_type", ["drivers_licence", "passport", "work_id", "national_id"]);
+export const withdrawalStatus = pgEnum("withdrawal_status", ["pending", "approved", "rejected"]);
 
 
 export const users = pgTable("users", {
@@ -143,12 +144,29 @@ export const kycSubmissions = pgTable("kyc_submissions", {
   ...timestamps,
 }, (table) => [index("kyc_user_id_idx").on(table.userId)]);
 
+export const withdrawalRequests = pgTable("withdrawal_requests", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  amount: integer("amount").notNull(),
+  cryptoNetwork: text("crypto_network").notNull(),
+  walletAddress: text("wallet_address").notNull(),
+  status: withdrawalStatus("status").notNull().default("pending"),
+  adminNotes: text("admin_notes"),
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  reviewedBy: uuid("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+  ...timestamps,
+}, (table) => [
+  index("withdrawal_requests_user_id_idx").on(table.userId),
+  index("withdrawal_requests_status_idx").on(table.status),
+]);
+
 export const usersRelations = relations(users, ({ one, many }) => ({
   profile: one(profiles),
   sessions: many(sessions),
   notifications: many(notifications),
   investments: many(investments),
   kycSubmission: one(kycSubmissions),
+  withdrawals: many(withdrawalRequests),
 }));
 export const profilesRelations = relations(profiles, ({ one }) => ({ user: one(users, { fields: [profiles.userId], references: [users.id] }) }));
 
@@ -163,5 +181,10 @@ export const investmentsRelations = relations(investments, ({ one }) => ({
 
 export const kycRelations = relations(kycSubmissions, ({ one }) => ({
   user: one(users, { fields: [kycSubmissions.userId], references: [users.id] }),
+}));
+
+export const withdrawalRequestsRelations = relations(withdrawalRequests, ({ one }) => ({
+  user: one(users, { fields: [withdrawalRequests.userId], references: [users.id] }),
+  reviewer: one(users, { fields: [withdrawalRequests.reviewedBy], references: [users.id] }),
 }));
 

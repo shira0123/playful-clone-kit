@@ -80,6 +80,7 @@ export const adminVerifyEmail = createServerFn({ method: "POST" }).validator(use
 export const adminDeleteUser = createServerFn({ method: "POST" }).validator(userId).handler(async ({ data }) => { await admin.deleteUser(data.userId); return { ok: true }; });
 export const adminResetPassword = createServerFn({ method: "POST" }).validator(userId).handler(async ({ data }) => { await admin.sendAdminPasswordReset(data.userId); return { ok: true }; });
 export const adminImpersonateUser = createServerFn({ method: "POST" }).validator(userId).handler(async ({ data }) => { await admin.impersonateUser(data.userId); return { ok: true }; });
+export const adminStopImpersonating = createServerFn({ method: "POST" }).handler(async () => { await admin.stopImpersonatingUser(); return { ok: true }; });
 export const getAuditLogs = createServerFn({ method: "GET" }).handler(() => admin.recentAuditLogs());
 export const adminUpdateUserFunds = createServerFn({ method: "POST" }).validator(z.object({ userId: z.string().uuid(), field: z.enum(["balance", "profits", "bonus", "referralCommission"]), amount: z.number().min(0), action: z.enum(["add", "deduct"]) })).handler(async ({ data }) => { await admin.updateUserFunds(data.userId, data.field, data.amount, data.action); return { ok: true }; });
 
@@ -137,6 +138,22 @@ export const resendVerificationEmail = createServerFn({ method: "POST" }).handle
   await auth.resendVerification(user.id, user.email);
   return { ok: true };
 });
+
+import * as withdrawal from "./server/services/withdrawal";
+
+export const requestWithdrawal = createServerFn({ method: "POST" })
+  .validator(z.object({ amount: z.number().min(1), cryptoNetwork: z.string().min(1), walletAddress: z.string().min(1) }))
+  .handler(async ({ data }) => { await withdrawal.requestWithdrawal(data.amount, data.cryptoNetwork, data.walletAddress); return { ok: true }; });
+
+export const getUserWithdrawals = createServerFn({ method: "GET" })
+  .handler(() => withdrawal.getUserWithdrawals());
+
+export const getAdminWithdrawals = createServerFn({ method: "GET" })
+  .handler(() => withdrawal.getAdminWithdrawals());
+
+export const adminUpdateWithdrawal = createServerFn({ method: "POST" })
+  .validator(z.object({ id: z.string().uuid(), status: z.enum(["approved", "rejected"]), adminNotes: z.string().optional() }))
+  .handler(async ({ data }) => { await withdrawal.adminUpdateWithdrawal(data.id, data.status, data.adminNotes); return { ok: true }; });
 
 import * as kycService from "./server/services/kyc";
 
